@@ -18,18 +18,18 @@ public class ParticipantController {
     private final ParticipantService participantService;
 
     @GetMapping("/{participantId}")
-    public ParticipantDTO getParticipant(@PathVariable("participantId") final Integer participantId) throws Exception {
-        return participantService.getService(participantId);
+    public ParticipantDTO getParticipant(@PathVariable("participantId") final Integer participantId) {
+        return participantService.getParticipant(participantId);
     }
 
     @PostMapping
     public ParticipantDTO addParticipant(@RequestBody final Participant newParticipant) {
-        return participantService.addService(newParticipant);
+        return participantService.addParticipant(newParticipant);
     }
 
     @PutMapping("/{participantId}")
     public ParticipantDTO updateParticipant(@RequestBody final Participant toUpdateParticipant,
                                             @PathVariable("participantId") final Integer participantId) {
-        return participantService.updateService(toUpdateParticipant, participantId);
+        return participantService.updateParticipant(toUpdateParticipant, participantId);
     }
 }
