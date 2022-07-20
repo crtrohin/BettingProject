@@ -4,11 +4,11 @@ import com.codefactorygroup.betting.domain.Participant;
 import lombok.Builder;
 
 @Builder
-public record ParticipantDTO(Integer dtoID, String name) {
+public record ParticipantDTO(Integer id, String name) {
 
-    public static ParticipantDTO converter(final Participant participant){
+    public static ParticipantDTO converter(final Participant participant) {
         return ParticipantDTO.builder()
-                .dtoID(participant.getId())
+                .id(participant.getId())
                 .name(participant.getName())
                 .build();
     }

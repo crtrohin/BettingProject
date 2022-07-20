@@ -13,6 +13,10 @@ spring:
     password: password
     driverClassName: org.h2.Driver
   jpa:
+    properties:
+      hibernate:
+        hbm2ddl:
+          import_files:  sports.sql, competitions.sql, participants.sql, events.sql, events_participants.sql, markets.sql, selections.sql
     database-platform: org.hibernate.dialect.H2Dialect
     defer-datasource-initialization: true
 logging:
@@ -24,3 +28,8 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+server:
+  error:
+    include-message: always
+
+
