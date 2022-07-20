@@ -1,14 +1,8 @@
 package com.codefactorygroup.betting.exception;
 
-public class ParticipantAlreadyExistsException extends RuntimeException{
-    private String message;
+public class ParticipantAlreadyExistsException extends RuntimeException {
 
-    public ParticipantAlreadyExistsException() {
+    public ParticipantAlreadyExistsException(Integer participantId) {
+        super(String.format("Participant with ID = %d already exists.", participantId));
     }
-
-    public ParticipantAlreadyExistsException(String msg) {
-        super(msg);
-        this.message = msg;
-    }
-
 }

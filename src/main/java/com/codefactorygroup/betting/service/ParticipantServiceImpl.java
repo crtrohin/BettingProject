@@ -1,5 +1,6 @@
 package com.codefactorygroup.betting.service;
 
+import com.codefactorygroup.betting.converter.ParticipantDtoToParticipantConverter;
 import com.codefactorygroup.betting.domain.Participant;
 import com.codefactorygroup.betting.dto.ParticipantDTO;
 import com.codefactorygroup.betting.exception.NoSuchParticipantExistsException;
@@ -8,43 +9,41 @@ import com.codefactorygroup.betting.repository.ParticipantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.NoSuchElementException;
-
-@Service
+@Service(value = "default")
 @RequiredArgsConstructor
 public class ParticipantServiceImpl implements ParticipantService {
+    private final ParticipantDtoToParticipantConverter participantDtoToParticipantConverter;
     private final ParticipantRepository participantRepository;
-
-//  private final ParticipantToParticipantDtoConverter participantToParticipantDtoConverter;
 
     public ParticipantDTO getParticipant(final Integer participantId) {
         return participantRepository.findById(participantId)
                 .map(ParticipantDTO::converter)
-                .orElseThrow(() -> new NoSuchElementException(String.format("No participant with ID = %d was found.", participantId)));
+                .orElseThrow(() -> new NoSuchParticipantExistsException(participantId));
 
     }
 
-    public ParticipantDTO addParticipant(final Participant newParticipant) {
-        Boolean foundParticipant = participantRepository.findById(newParticipant.getId()).isPresent();
+    public ParticipantDTO addParticipant(final ParticipantDTO newParticipant) {
+        boolean foundParticipant = participantRepository.existsById(newParticipant.dtoID());
         if (foundParticipant) {
-                throw new ParticipantAlreadyExistsException(String.format("Participant with ID = %d already exists.", newParticipant.getId()));
+            throw new ParticipantAlreadyExistsException(newParticipant.dtoID());
         }
-        return ParticipantDTO.converter(participantRepository.save(newParticipant));
+        return ParticipantDTO.converter(participantRepository.
+                save(participantDtoToParticipantConverter.convert(newParticipant)));
     }
 
-    private Participant update(final Participant participant, final Participant toUpdateParticipant) {
-        participant.setId(toUpdateParticipant.getId());
-        participant.setName(toUpdateParticipant.getName());
+    private Participant update(final Participant participant, final ParticipantDTO toUpdateParticipant) {
+        participant.setId(toUpdateParticipant.dtoID());
+        participant.setName(toUpdateParticipant.name());
         return participant;
     }
 
-    public ParticipantDTO updateParticipant(final Participant toUpdateParticipant,
+    public ParticipantDTO updateParticipant(final ParticipantDTO toUpdateParticipant,
                                             final Integer participantId) {
         return participantRepository
                 .findById(participantId)
                 .map(participantFromDb -> update(participantFromDb, toUpdateParticipant))
                 .map(participantRepository::save)
                 .map(ParticipantDTO::converter)
-                .orElseThrow(() -> new NoSuchParticipantExistsException("Failed to save participant."));
+                .orElseThrow(() -> new NoSuchParticipantExistsException(participantId));
     }
 }

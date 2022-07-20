@@ -7,7 +7,7 @@ public interface ParticipantService {
 
     ParticipantDTO getParticipant(Integer participantId);
 
-    ParticipantDTO addParticipant(Participant newParticipant);
+    ParticipantDTO addParticipant(ParticipantDTO newParticipant);
 
-    ParticipantDTO updateParticipant(Participant toUpdateParticipant, Integer participantId);
+    ParticipantDTO updateParticipant(ParticipantDTO toUpdateParticipant, Integer participantId);
 }

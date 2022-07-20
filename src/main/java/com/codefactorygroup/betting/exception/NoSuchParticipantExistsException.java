@@ -1,13 +1,8 @@
 package com.codefactorygroup.betting.exception;
 
-public class NoSuchParticipantExistsException extends RuntimeException{
-    private String message;
+public class NoSuchParticipantExistsException extends RuntimeException {
 
-    public NoSuchParticipantExistsException() {
-    }
-
-    public NoSuchParticipantExistsException(String msg) {
-        super(msg);
-        this.message = msg;
+    public NoSuchParticipantExistsException(Integer participantId) {
+        super(String.format("No participant with ID = %d was found.", participantId));
     }
 }

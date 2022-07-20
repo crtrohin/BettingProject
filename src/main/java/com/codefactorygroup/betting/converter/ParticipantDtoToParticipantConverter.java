@@ -6,13 +6,13 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ParticipantToParticipantDtoConverter implements Converter<Participant, ParticipantDTO> {
-
+public class ParticipantDtoToParticipantConverter implements Converter<ParticipantDTO, Participant> {
     @Override
-    public ParticipantDTO convert(Participant source) {
-      return ParticipantDTO.builder()
-                .dtoID(source.getId())
-                .name(source.getName())
+    public Participant convert(ParticipantDTO source) {
+        return Participant
+                .builder()
+                .id(source.dtoID())
+                .name(source.name())
                 .build();
     }
 }
