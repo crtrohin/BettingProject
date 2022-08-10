@@ -34,7 +34,7 @@ class ParticipantControllerTests {
 
     @Test
     void getParticipantShouldReturnException() {
-        when(participantService.getParticipant(10)).thenThrow(new NoSuchEntityExistsException(String.format("No participant with ID=%d was found.", 10)));
+        when(participantService.getParticipant(10)).thenThrow(new NoSuchEntityExistsException(String.format("No participant with ID = %d was found.", 10)));
 
         NoSuchEntityExistsException noSuchEntityExistsException = assertThrows(NoSuchEntityExistsException.class,
                 () -> {participantController.getParticipant(10);
@@ -56,7 +56,7 @@ class ParticipantControllerTests {
     @Test
     void addParticipantShoudlReturnException() {
         ParticipantDTO participantDTO = new ParticipantDTO(2, "Atletico Bilbao");
-        when(participantService.addParticipant(participantDTO)).thenThrow(new EntityAlreadyExistsException(String.format("Participant with ID=%d already exists.", 2)));
+        when(participantService.addParticipant(participantDTO)).thenThrow(new EntityAlreadyExistsException(String.format("Participant with ID = %d already exists.", 2)));
 
         EntityAlreadyExistsException entityAlreadyExistsException = assertThrows(EntityAlreadyExistsException.class,
                 () -> participantController.addParticipant(participantDTO));
@@ -77,7 +77,7 @@ class ParticipantControllerTests {
     @Test
     void updateParticipantShouldReturnException() {
         ParticipantDTO participantDTO = new ParticipantDTO(4, "Tottenham");
-        when(participantService.updateParticipant(participantDTO, 4)).thenThrow(new NoSuchEntityExistsException(String.format("No participant with ID=%d was found.", 4)));
+        when(participantService.updateParticipant(participantDTO, 4)).thenThrow(new NoSuchEntityExistsException(String.format("No participant with ID = %d was found.", 4)));
 
         NoSuchEntityExistsException noSuchEntityExistsException = assertThrows(NoSuchEntityExistsException.class,
                 () -> participantController.updateParticipant(participantDTO, 4));
