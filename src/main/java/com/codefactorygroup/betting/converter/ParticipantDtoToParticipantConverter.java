@@ -11,7 +11,7 @@ public class ParticipantDtoToParticipantConverter implements Converter<Participa
     public Participant convert(ParticipantDTO source) {
         return Participant
                 .builder()
-                .id(source.dtoID())
+                .id(source.id())
                 .name(source.name())
                 .build();
     }

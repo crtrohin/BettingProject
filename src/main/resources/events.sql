@@ -1,0 +1,16 @@
+INSERT INTO event (name, competition_id) VALUES ('Senegal vs Netherlands', 1);
+INSERT INTO event (name, competition_id) VALUES ('Qatar vs Ecuador', 1);
+INSERT INTO event (name, competition_id) VALUES ('England vs Iran', 1);
+INSERT INTO event (name, competition_id) VALUES ('USA vs Wales', 1);
+INSERT INTO event (name, competition_id) VALUES ('Argentina vs Saudi Arabia', 1);
+INSERT INTO event (name, competition_id) VALUES ('Mexico vs Poland', 1);
+INSERT INTO event (name, competition_id) VALUES ('Denmark vs Tunisia', 1);
+INSERT INTO event (name, competition_id) VALUES ('France vs Australia', 1);
+INSERT INTO event (name, competition_id) VALUES ('Germany vs Japan', 1);
+INSERT INTO event (name, competition_id) VALUES ('Spain vs Costa Rica', 1);
+INSERT INTO event (name, competition_id) VALUES ('Morocco vs Croatia', 1);
+INSERT INTO event (name, competition_id) VALUES ('Belgium vs Canada', 1);
+INSERT INTO event (name, competition_id) VALUES ('Switzerland vs Cameroon', 1);
+INSERT INTO event (name, competition_id) VALUES ('Brazil vs Serbia', 1);
+INSERT INTO event (name, competition_id) VALUES ('Uruguay vs South Korea', 1);
+INSERT INTO event (name, competition_id) VALUES ('Portugal vs Ghana', 1);
