@@ -1,7 +1,6 @@
 package com.codefactorygroup.betting;
 
 import com.codefactorygroup.betting.converter.ParticipantDtoToParticipantConverter;
-import com.codefactorygroup.betting.domain.Event;
 import com.codefactorygroup.betting.domain.Participant;
 import com.codefactorygroup.betting.dto.ParticipantDTO;
 import org.junit.jupiter.api.Test;

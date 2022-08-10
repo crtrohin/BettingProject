@@ -45,6 +45,4 @@ class ParticipantServiceTests {
         assertEquals(participant, response);
     }
 
-    
-
 }

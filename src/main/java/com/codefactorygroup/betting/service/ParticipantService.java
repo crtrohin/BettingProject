@@ -20,5 +20,4 @@ public interface ParticipantService {
     RandomParticipantsDTO getRandomParticipants();
 
     List<ParticipantDTO> findPaginated(int pageNo, int pageSize);
-
 }

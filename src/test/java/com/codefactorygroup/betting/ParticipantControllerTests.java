@@ -21,6 +21,7 @@ class ParticipantControllerTests {
     private final ParticipantService participantService = mock(ParticipantServiceImpl.class);
     private final ParticipantController participantController = new ParticipantController(participantService);
 
+
     @Test
     void getParticipantShouldReturnParticipant() {
         ParticipantDTO participantDTO = new ParticipantDTO(10, "Arsenal");
