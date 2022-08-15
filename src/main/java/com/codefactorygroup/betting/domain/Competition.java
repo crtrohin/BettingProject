@@ -29,7 +29,11 @@ public class Competition {
     @JoinColumn(name = "competition_id")
     private List<Event> events = new ArrayList<>();
 
-    public void setEvents(List<Event> events) {
+    public void updateEvents(List<Event> events) {
         this.events.addAll(events);
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
     }
 }

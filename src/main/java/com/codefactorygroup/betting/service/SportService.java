@@ -1,7 +1,9 @@
 package com.codefactorygroup.betting.service;
 
 import com.codefactorygroup.betting.dto.SportDTO;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface SportService {
     SportDTO getSport(Integer sportId);
 

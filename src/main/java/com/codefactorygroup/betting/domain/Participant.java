@@ -30,6 +30,22 @@ public class Participant {
     )
     private List<Event> events = new ArrayList<>();
 
+    public void addEvent(Event event) {
+        events.add(event);
+        event.getParticipants().add(this);
+    }
+
+    public void removeEvent(Event event) {
+        events.remove(event);
+        event.getParticipants().remove(this);
+    }
+
+    public void remove() {
+        for(Event event : new ArrayList<>(events)) {
+            removeEvent(event);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

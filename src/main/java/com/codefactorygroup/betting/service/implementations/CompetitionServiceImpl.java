@@ -3,32 +3,37 @@ package com.codefactorygroup.betting.service.implementations;
 import com.codefactorygroup.betting.converter.CompetitionDTOtoCompetitionConverter;
 import com.codefactorygroup.betting.converter.EventDTOtoEventConverter;
 import com.codefactorygroup.betting.domain.Competition;
+import com.codefactorygroup.betting.domain.Event;
 import com.codefactorygroup.betting.dto.CompetitionDTO;
 import com.codefactorygroup.betting.dto.EventDTO;
-import com.codefactorygroup.betting.exception.EntityAlreadyExistsException;
 import com.codefactorygroup.betting.exception.NoSuchEntityExistsException;
 import com.codefactorygroup.betting.repository.CompetitionRepository;
 import com.codefactorygroup.betting.service.CompetitionService;
-import org.springframework.stereotype.Service;
+import com.codefactorygroup.betting.service.EventService;
+import com.codefactorygroup.betting.service.ParticipantService;
+import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@Service(value = "competitionService")
+@Component(value = "competitionService")
 public class CompetitionServiceImpl implements CompetitionService {
 
     private final CompetitionRepository competitionRepository;
     private final CompetitionDTOtoCompetitionConverter competitionDTOtoCompetitionConverter;
-
     private final EventDTOtoEventConverter eventDTOtoEventConverter;
+    private final EventService eventService;
+    private final ParticipantService participantService;
 
-    public CompetitionServiceImpl(CompetitionRepository competitionRepository, CompetitionDTOtoCompetitionConverter competitionDTOtoCompetitionConverter, EventDTOtoEventConverter eventDTOtoEventConverter) {
+    public CompetitionServiceImpl(CompetitionRepository competitionRepository, EventService eventService,
+                                  CompetitionDTOtoCompetitionConverter competitionDTOtoCompetitionConverter,
+                                  EventDTOtoEventConverter eventDTOtoEventConverter, ParticipantService participantService) {
         this.competitionRepository = competitionRepository;
+        this.eventService = eventService;
         this.competitionDTOtoCompetitionConverter = competitionDTOtoCompetitionConverter;
         this.eventDTOtoEventConverter = eventDTOtoEventConverter;
+        this.participantService = participantService;
     }
 
     @Transactional
@@ -36,18 +41,35 @@ public class CompetitionServiceImpl implements CompetitionService {
     public CompetitionDTO getCompetition(Integer competitionId) {
         return competitionRepository.findById(competitionId)
                 .map(CompetitionDTO::converter)
-                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Competition with ID=%d doesn't exists.", competitionId)));
+                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Competition with ID = %d doesn't exist.", competitionId)));
     }
 
     @Transactional
     @Override
     public CompetitionDTO addCompetition(CompetitionDTO newCompetition) {
-        boolean foundCompetition = competitionRepository.existsById(newCompetition.id());
-        if (foundCompetition) {
-            throw new EntityAlreadyExistsException(String.format("Competition with ID=%d already exists.", newCompetition.id()));
-        }
+        List<EventDTO> eventDTOS = Optional.of(newCompetition).map(CompetitionDTO::events).orElseGet(Collections::emptyList);
+
+        List<Event> events = eventDTOS
+                .stream()
+                .map(event ->
+                        eventService
+                                .findEventByNameAndStartTimeAndEndTime(event.name(), event.startTime(),
+                                        event.endTime(),
+                                        Optional
+                                                .of(event)
+                                                .map(EventDTO::participants)
+                                                .orElseGet(Collections::emptyList)
+                                                .stream()
+                                                .map(participant -> participantService.findParticipantByName(participant.name()))
+                                                .collect(Collectors.toList())))
+                .collect(Collectors.toList());
+
+        Competition competition = competitionDTOtoCompetitionConverter.convert(newCompetition);
+
+        competition.setEvents(events);
+
         return CompetitionDTO.converter(competitionRepository.
-                save(competitionDTOtoCompetitionConverter.convert(newCompetition)));
+                save(competition));
     }
 
     @Transactional
@@ -59,7 +81,6 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     private Competition update(final Competition competition, final CompetitionDTO toUpdateCompetition) {
         List<EventDTO> eventDTOS = Optional.of(toUpdateCompetition).map(CompetitionDTO::events).orElseGet(Collections::emptyList);
-        competition.setId(toUpdateCompetition.id());
         competition.setName(toUpdateCompetition.name());
         competition.setEvents(eventDTOS
                 .stream()
@@ -75,7 +96,28 @@ public class CompetitionServiceImpl implements CompetitionService {
                 .map(competitionFromDb -> update(competitionFromDb, newCompetition))
                 .map(competitionRepository::save)
                 .map(CompetitionDTO::converter)
-                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Competition with ID=%d doesn't exist.", competitionId)));
+                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Competition with ID = %d doesn't exist.", competitionId)));
+    }
+
+    public Competition findCompetitionByName(String name, List<Event> events) {
+        Optional<Competition> competitionOptional = competitionRepository.findCompetitionByName(name);
+        if (competitionOptional.isPresent()) {
+            Competition competition = competitionOptional.get();
+
+            List<Event> competitionEvents = competition.getEvents();
+            competitionEvents.addAll(events);
+
+            Set<Event> eventSet = competitionEvents.stream().collect(Collectors.toSet());
+            List<Event> updatedEvents = new ArrayList<>(eventSet);
+
+            competition.setEvents(updatedEvents);
+            return competition;
+        } else {
+            Competition competition = new Competition();
+            competition.setName(name);
+            competition.setEvents(events);
+            return competition;
+        }
     }
 
 }

@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Integer>{
@@ -22,6 +23,6 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
     List<Participant> findRandomParticipantsDTO(
             @Param("numberOfParticipants") Integer numberOfParticipants);
 
-    Participant findByName(String name);
+    Optional<Participant> findByName(String name);
 
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class EventDTOtoEventConverter implements Converter<EventDTO, Event>{
@@ -25,7 +26,7 @@ public class EventDTOtoEventConverter implements Converter<EventDTO, Event>{
 
     @Override
     public Event convert(EventDTO source) {
-        List<ParticipantDTO> participantDTOS = Optional.of(source).map(EventDTO::eventParticipants).orElseGet(Collections::emptyList);
+        List<ParticipantDTO> participantDTOS = Optional.of(source).map(EventDTO::participants).orElseGet(Collections::emptyList);
         List<MarketDTO> marketDTOS = Optional.of(source).map(EventDTO::markets).orElseGet(Collections::emptyList);
         return Event
                 .builder()
@@ -36,11 +37,11 @@ public class EventDTOtoEventConverter implements Converter<EventDTO, Event>{
                 .participants(participantDTOS
                         .stream()
                         .map(participantDtoToParticipantConverter::convert)
-                        .toList())
+                        .collect(Collectors.toList()))
                 .markets(marketDTOS
                         .stream()
                         .map(marketDTOtoMarketConverter::convert)
-                        .toList())
+                        .collect(Collectors.toList()))
                 .build();
     }
 }

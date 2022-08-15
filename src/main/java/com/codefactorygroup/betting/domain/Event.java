@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @AllArgsConstructor
@@ -27,7 +28,8 @@ public class Event {
     @Column(name = "end_time")
     private String endTime;
 
-    @ManyToMany
+    @ManyToMany(cascade =
+            {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "event_participants",
             joinColumns = @JoinColumn(name = "event_id",  referencedColumnName = "id"),
@@ -36,6 +38,10 @@ public class Event {
     private List<Participant> participants = new ArrayList<>();
 
     public void setParticipants(List<Participant> participants) {
+        this.participants = participants;
+    }
+
+    public void updateParticipants(List<Participant> participants) {
         this.participants.addAll(participants);
     }
 
@@ -49,5 +55,18 @@ public class Event {
 
     public void setMarkets(List<Market> markets) {
         this.markets.addAll(markets);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Event event = (Event) o;
+        return name.equals(event.name) && Objects.equals(startTime, event.startTime) && Objects.equals(endTime, event.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, startTime, endTime);
     }
 }

@@ -1,4 +1,4 @@
-package com.codefactorygroup.betting;
+package com.codefactorygroup.betting.serviceTests;
 
 import com.codefactorygroup.betting.domain.Participant;
 import com.codefactorygroup.betting.repository.ParticipantRepository;
@@ -21,7 +21,7 @@ class ParticipantServiceTests {
     private ParticipantRepository participantRepository;
 
     private final ParticipantServiceImpl participantService =
-            new ParticipantServiceImpl(null, participantRepository);
+            new ParticipantServiceImpl(null, participantRepository, null);
 
     @Test
     void getParticipantShouldReturnParticipant() {

@@ -1,5 +1,3 @@
-#server:
-#  port: 8000 # here we can change the default port
 spring:
   sql:
     init:
@@ -16,7 +14,7 @@ spring:
     properties:
       hibernate:
         hbm2ddl:
-          import_files:  sports.sql, competitions.sql, participants.sql, events.sql, events_participants.sql, markets.sql, selections.sql
+          import_files:  sql/sports.sql, sql/competitions.sql, sql/participants.sql, sql/events.sql, sql/events_participants.sql, sql/markets.sql, sql/selections.sql
     database-platform: org.hibernate.dialect.H2Dialect
     defer-datasource-initialization: true
 logging:

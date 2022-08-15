@@ -8,6 +8,6 @@ Market to add fields:
 
 The betting model database: 
 
-![](/Users/ctrohin/Downloads/Betting Model Database.png)
+![](src/main/resources/img/BettingModelDB.png)
 
 

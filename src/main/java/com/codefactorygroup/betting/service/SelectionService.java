@@ -1,7 +1,9 @@
 package com.codefactorygroup.betting.service;
 
 import com.codefactorygroup.betting.dto.SelectionDTO;
+import org.springframework.stereotype.Service;
 
+@Service
 public interface SelectionService {
     SelectionDTO getSelection(Integer selectionId);
 

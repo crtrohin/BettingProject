@@ -1,10 +1,13 @@
 package com.codefactorygroup.betting.service;
 
+import com.codefactorygroup.betting.domain.Participant;
 import com.codefactorygroup.betting.dto.ParticipantDTO;
 import com.codefactorygroup.betting.dto.RandomParticipantsDTO;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public interface ParticipantService {
 
     ParticipantDTO getParticipant(Integer participantId);
@@ -20,4 +23,7 @@ public interface ParticipantService {
     RandomParticipantsDTO getRandomParticipants();
 
     List<ParticipantDTO> findPaginated(int pageNo, int pageSize);
-}
+
+    public Participant findParticipantByName(String name);
+
+    }

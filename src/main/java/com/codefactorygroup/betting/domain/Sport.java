@@ -13,7 +13,6 @@ import java.util.List;
 @Setter
 @Builder
 @Table(name="sport")
-
 public class Sport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,11 +29,7 @@ public class Sport {
     @Column(name="competitions")
     private List<Competition> competitions = new ArrayList<>();
 
-    public void removeCompetition(Competition competition) {
-        this.competitions.remove(competition);
-    }
-
     public void setCompetitions(List<Competition> competitions) {
-        this.competitions.addAll(competitions);
+        this.competitions = competitions;
     }
 }

@@ -3,12 +3,15 @@ package com.codefactorygroup.betting.converter;
 import com.codefactorygroup.betting.domain.Sport;
 import com.codefactorygroup.betting.dto.CompetitionDTO;
 import com.codefactorygroup.betting.dto.SportDTO;
+import lombok.NoArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 @Component
 public class SportDTOtoSportConverter implements Converter<SportDTO, Sport> {
@@ -28,7 +31,7 @@ public class SportDTOtoSportConverter implements Converter<SportDTO, Sport> {
                 .competitions(competitionList
                         .stream()
                         .map(competitionDTOtoCompetitionConverter::convert)
-                        .toList())
+                        .collect(Collectors.toList()))
                 .build();
     }
 }
