@@ -57,12 +57,16 @@ public class SelectionServiceImpl implements SelectionService {
     @Transactional
     @Override
     public void deleteSelection(Integer selectionId) {
-        selectionRepository.deleteById(selectionId);
+        boolean selectionExists = selectionRepository.existsById(selectionId);
+        if (selectionExists) {
+            selectionRepository.deleteById(selectionId);
+        } else {
+            throw new NoSuchEntityExistsException(String.format("Selection with ID=%d doesn't exist.", selectionId));
+        }
     }
 
 
     private Selection update(final Selection selection, final SelectionDTO toUpdateSelection) {
-        selection.setId(toUpdateSelection.id());
         selection.setName(toUpdateSelection.name());
         selection.setOdds(toUpdateSelection.odds());
         return selection;

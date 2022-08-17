@@ -32,4 +32,8 @@ public class Competition {
     public void setEvents(List<Event> events) {
         this.events.addAll(events);
     }
+
+    public void addEvent(Event event) {
+        this.events.add(event);
+    }
 }

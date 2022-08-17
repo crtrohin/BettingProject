@@ -84,11 +84,15 @@ public class ParticipantServiceImpl implements ParticipantService {
     @Override
     @Transactional
     public void deleteParticipant(final Integer participantId) {
-        participantRepository.deleteById(participantId);
+        boolean participantExists = participantRepository.existsById(participantId);
+        if (participantExists) {
+            participantRepository.deleteById(participantId);
+        } else {
+            throw new NoSuchEntityExistsException(String.format("Participant with ID=%d doesn't exist.", participantId));
+        }
     }
 
     private Participant update(final Participant participant, final ParticipantDTO toUpdateParticipant) {
-        participant.setId(toUpdateParticipant.id());
         participant.setName(toUpdateParticipant.name());
         return participant;
     }

@@ -12,9 +12,7 @@ import com.codefactorygroup.betting.service.MarketService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service(value = "marketService")
@@ -70,7 +68,7 @@ public class MarketServiceImpl implements MarketService {
                 .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Market with ID=%d doesn't exist.", marketId)));
 
         Selection selection = selectionDTOtoSelectionConverter.convert(selectionDTO);
-        market.getSelections().add(selection);
+        market.addSelection(selection);
 
         return MarketDTO.converter(marketRepository.save(market));
     }
@@ -78,18 +76,16 @@ public class MarketServiceImpl implements MarketService {
     @Transactional
     @Override
     public void deleteMarket(Integer marketId) {
-        marketRepository.deleteById(marketId);
+        boolean marketExists = marketRepository.existsById(marketId);
+        if (marketExists) {
+            marketRepository.deleteById(marketId);
+        } else {
+            throw new NoSuchEntityExistsException(String.format("Market with ID=%d doesn't exist.", marketId));
+        }
     }
 
     private Market update(final Market market, final MarketDTO toUpdateMarket) {
-        List<SelectionDTO> selectionDTOS = Optional.of(toUpdateMarket).map(MarketDTO::selections).orElseGet(Collections::emptyList);
-        market.setId(toUpdateMarket.id());
         market.setName(toUpdateMarket.name());
-        market.setSelections(selectionDTOS
-                .stream()
-                .map(selectionDTOtoSelectionConverter::convert)
-                .toList()
-        );
         return market;
     }
 

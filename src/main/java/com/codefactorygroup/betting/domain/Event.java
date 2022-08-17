@@ -35,6 +35,10 @@ public class Event {
     @Column(name ="participants")
     private List<Participant> participants = new ArrayList<>();
 
+    public void addParticipant(Participant participant) {
+        this.participants.add(participant);
+    }
+
     public void setParticipants(List<Participant> participants) {
         this.participants.addAll(participants);
     }
@@ -46,6 +50,10 @@ public class Event {
     @JoinColumn(name = "event_id")
     @Column(name = "markets")
     private List<Market> markets = new ArrayList<>();
+
+    public void addMarket(Market market) {
+        this.markets.add(market);
+    }
 
     public void setMarkets(List<Market> markets) {
         this.markets.addAll(markets);

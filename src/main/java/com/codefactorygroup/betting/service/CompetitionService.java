@@ -2,6 +2,7 @@ package com.codefactorygroup.betting.service;
 
 import com.codefactorygroup.betting.dto.CompetitionDTO;
 import com.codefactorygroup.betting.dto.EventDTO;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 

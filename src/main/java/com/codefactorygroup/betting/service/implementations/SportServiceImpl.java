@@ -62,7 +62,7 @@ public class SportServiceImpl implements SportService {
                 .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Sport with ID=%d doesn't exist.", sportId)));
 
         Competition competition = competitionDTOtoCompetitionConverter.convert(competitionDTO);
-        sport.getCompetitions().add(competition);
+        sport.addCompetition(competition);
 
         return SportDTO.converter(sportRepository.save(sport));
     }
@@ -71,7 +71,12 @@ public class SportServiceImpl implements SportService {
     @Transactional
     @Override
     public void deleteSport(Integer sportId) {
-        sportRepository.deleteById(sportId);
+        boolean sportExists = sportRepository.existsById(sportId);
+        if (sportExists) {
+            sportRepository.deleteById(sportId);
+        } else {
+            throw new NoSuchEntityExistsException(String.format("Sport with ID=%d doesn't exist.", sportId));
+        }
     }
 
     private Sport update(final Sport sport, final SportDTO toUpdateSport) {

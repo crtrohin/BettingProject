@@ -30,6 +30,10 @@ public class Market {
     @Column(name = "selections")
     private List<Selection> selections = new ArrayList<>();
 
+    public void addSelection(Selection selection) {
+        this.selections.add(selection);
+    }
+
     public void setSelections(List<Selection> selections) {
         this.selections.addAll(selections);
     }
