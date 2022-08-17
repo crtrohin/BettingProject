@@ -25,7 +25,7 @@ public class EventDTOtoEventConverter implements Converter<EventDTO, Event>{
 
     @Override
     public Event convert(EventDTO source) {
-        List<ParticipantDTO> participantDTOS = Optional.of(source).map(EventDTO::eventParticipants).orElseGet(Collections::emptyList);
+        List<ParticipantDTO> participantDTOS = Optional.of(source).map(EventDTO::participants).orElseGet(Collections::emptyList);
         List<MarketDTO> marketDTOS = Optional.of(source).map(EventDTO::markets).orElseGet(Collections::emptyList);
         return Event
                 .builder()

@@ -1,6 +1,5 @@
 package com.codefactorygroup.betting.dto;
 
-import com.codefactorygroup.betting.domain.Market;
 import com.codefactorygroup.betting.domain.Selection;
 import lombok.Builder;
 

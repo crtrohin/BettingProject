@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/participants")
 public class ParticipantController {
     private final ParticipantService participantService;
 
@@ -17,34 +16,44 @@ public class ParticipantController {
         this.participantService = participantService;
     }
 
-    @GetMapping("/{participantId}")
+    @GetMapping("/participants/{participantId}")
     public ParticipantDTO getParticipant(@PathVariable("participantId") final Integer participantId) {
         return participantService.getParticipant(participantId);
     }
 
-    @PostMapping
+    @GetMapping("/participants")
+    public List<ParticipantDTO> getAllParticipants() {
+        return participantService.getAllParticipants();
+    }
+
+    @GetMapping("/events/{eventId}/participants")
+    public List<ParticipantDTO> getParticipantsByEventId(@PathVariable(name = "eventId") final Integer eventId) {
+        return participantService.getParticipantsByEventId(eventId);
+    }
+
+    @PostMapping("/participants")
     public ParticipantDTO addParticipant(@RequestBody final ParticipantDTO newParticipant) {
         return participantService.addParticipant(newParticipant);
     }
 
-    @PutMapping("/{participantId}")
+    @PutMapping("/participants/{participantId}")
     public ParticipantDTO updateParticipant(@RequestBody final ParticipantDTO toUpdateParticipant,
                                             @PathVariable("participantId") final Integer participantId) {
         return participantService.updateParticipant(toUpdateParticipant, participantId);
     }
 
-    @GetMapping("/random")
+    @GetMapping("/participants/random")
     public RandomParticipantsDTO getRandomParticipants() {
         return participantService.getRandomParticipants();
     }
 
-    @GetMapping
-    public List<ParticipantDTO> getAllParticipants(@RequestParam("page") Integer page,
-                                   @RequestParam("perPage") Integer perPage) {
+    @GetMapping("/participants/paginated")
+    public List<ParticipantDTO> getAllParticipantsByPage(@RequestParam(value = "page") Integer page,
+                                                         @RequestParam("perPage") Integer perPage) {
         return participantService.findPaginated(page, perPage);
     }
 
-    @DeleteMapping("/{participantId}")
+    @DeleteMapping("/participants/{participantId}")
     public void deleteParticipant(@PathVariable("participantId") final Integer participantId) {
         participantService.deleteParticipant(participantId);
     }

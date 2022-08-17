@@ -3,7 +3,11 @@ package com.codefactorygroup.betting.service.implementations;
 import com.codefactorygroup.betting.converter.EventDTOtoEventConverter;
 import com.codefactorygroup.betting.converter.MarketDTOtoMarketConverter;
 import com.codefactorygroup.betting.converter.ParticipantDtoToParticipantConverter;
+import com.codefactorygroup.betting.domain.Competition;
 import com.codefactorygroup.betting.domain.Event;
+import com.codefactorygroup.betting.domain.Market;
+import com.codefactorygroup.betting.domain.Participant;
+import com.codefactorygroup.betting.dto.CompetitionDTO;
 import com.codefactorygroup.betting.dto.EventDTO;
 import com.codefactorygroup.betting.dto.MarketDTO;
 import com.codefactorygroup.betting.dto.ParticipantDTO;
@@ -37,7 +41,6 @@ public class EventServiceImpl implements EventService {
         this.marketDTOtoMarketConverter = marketDTOtoMarketConverter;
     }
 
-    @Transactional
     @Override
     public EventDTO getEvent(Integer eventId) {
         return eventRepository.findById(eventId)
@@ -45,16 +48,75 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Event with ID=%d doesn't exist.", eventId)));
     }
 
+    @Override
+    public List<EventDTO> getAllEvents() {
+        return eventRepository.findAll()
+                .stream()
+                .map(EventDTO::converter)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EventDTO> getEventsByCompetitionId(Integer competitionId) {
+        return eventRepository.findEventsByCompetitionId(competitionId)
+                .stream()
+                .map(EventDTO::converter)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EventDTO> getEventsByParticipantId(Integer participantId) {
+        return eventRepository.findEventsByParticipantId(participantId)
+                .stream()
+                .map(EventDTO::converter)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EventDTO> getEventsByMarketId(Integer marketId) {
+        return eventRepository.findEventsByMarketId(marketId)
+                .stream()
+                .map(EventDTO::converter)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     @Override
     public EventDTO addEvent(EventDTO newEvent) {
-        boolean foundEvent = eventRepository.existsById(newEvent.id());
-        if (foundEvent) {
-            throw new EntityAlreadyExistsException(String.format("Event with ID=%d already exists.", newEvent.id()));
+        Optional<Event> eventOptional = eventRepository.findByNameAndStartTimeAndEndTime(newEvent.name(),
+                newEvent.startTime(), newEvent.endTime());
+        if (eventOptional.isPresent()) {
+            throw new EntityAlreadyExistsException(String.format("Event with name=%s already exists.", newEvent.name()));
         }
         return EventDTO.converter(eventRepository.
                 save(eventDTOtoEventConverter.convert(newEvent)));
     }
+
+    @Transactional
+    @Override
+    public EventDTO addMarketToEvent(final MarketDTO marketDTO, final Integer eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Event with ID=%d doesn't exist.", eventId)));
+
+        Market market = marketDTOtoMarketConverter.convert(marketDTO);
+        event.getMarkets().add(market);
+
+        return EventDTO.converter(eventRepository.save(event));
+    }
+
+    @Transactional
+    @Override
+    public EventDTO addParticipantToEvent(ParticipantDTO participantDTO, Integer eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Event with ID=%d doesn't exist.", eventId)));
+
+        Participant participant = participantDtoToParticipantConverter.convert(participantDTO);
+        event.getParticipants().add(participant);
+
+        return EventDTO.converter(eventRepository.save(event));
+    }
+
+
 
     @Transactional
     @Override
@@ -64,7 +126,7 @@ public class EventServiceImpl implements EventService {
 
 
     private Event update(final Event event, final EventDTO toUpdateEvent) {
-        List <ParticipantDTO> participantDTOS = Optional.of(toUpdateEvent).map(EventDTO::eventParticipants).orElseGet(Collections::emptyList);
+        List <ParticipantDTO> participantDTOS = Optional.of(toUpdateEvent).map(EventDTO::participants).orElseGet(Collections::emptyList);
         List <MarketDTO> marketDTOS = Optional.of(toUpdateEvent).map(EventDTO::markets).orElseGet(Collections::emptyList);
         event.setId(toUpdateEvent.id());
         event.setName(toUpdateEvent.name());

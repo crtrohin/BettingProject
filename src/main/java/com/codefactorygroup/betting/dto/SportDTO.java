@@ -1,6 +1,5 @@
 package com.codefactorygroup.betting.dto;
 
-import com.codefactorygroup.betting.converter.CompetitionDTOtoCompetitionConverter;
 import com.codefactorygroup.betting.domain.Competition;
 import com.codefactorygroup.betting.domain.Sport;
 import lombok.Builder;

@@ -2,6 +2,7 @@ package com.codefactorygroup.betting.service.implementations;
 
 import com.codefactorygroup.betting.converter.CompetitionDTOtoCompetitionConverter;
 import com.codefactorygroup.betting.converter.SportDTOtoSportConverter;
+import com.codefactorygroup.betting.domain.Competition;
 import com.codefactorygroup.betting.domain.Sport;
 import com.codefactorygroup.betting.dto.CompetitionDTO;
 import com.codefactorygroup.betting.dto.SportDTO;
@@ -32,7 +33,6 @@ public class SportServiceImpl implements SportService {
         this.competitionDTOtoCompetitionConverter = competitionDTOtoCompetitionConverter;
     }
 
-    @Transactional
     @Override
     public SportDTO getSport(Integer sportId) {
         return sportRepository.findById(sportId)
@@ -40,15 +40,31 @@ public class SportServiceImpl implements SportService {
                 .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Sport with ID=%d doesn't exists.", sportId)));
     }
 
+    @Override
+    public List<SportDTO> getAllSports() {
+        return sportRepository.findAll()
+                .stream()
+                .map(SportDTO::converter)
+                .collect(Collectors.toList());
+    }
 
     @Transactional
     @Override
     public SportDTO addSport(SportDTO sport) {
-        boolean foundSport = sportRepository.existsById(sport.id());
-        if (foundSport) {
-            throw new EntityAlreadyExistsException(String.format("Sport with ID=%d already exists.", sport.id()));
-        }
-        return SportDTO.converter(sportRepository.save(sportDTOtoSportConverter.convert(sport)));
+        return SportDTO.converter(
+                sportRepository.save(sportDTOtoSportConverter.convert(sport)));
+    }
+
+    @Transactional
+    @Override
+    public SportDTO addCompetitionToSport(CompetitionDTO competitionDTO, Integer sportId) {
+        Sport sport = sportRepository.findById(sportId)
+                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Sport with ID=%d doesn't exist.", sportId)));
+
+        Competition competition = competitionDTOtoCompetitionConverter.convert(competitionDTO);
+        sport.getCompetitions().add(competition);
+
+        return SportDTO.converter(sportRepository.save(sport));
     }
 
 
@@ -79,4 +95,5 @@ public class SportServiceImpl implements SportService {
                 .map(SportDTO::converter)
                 .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Sport with ID=%d doesn't exist.", sportId)));
     }
+
 }

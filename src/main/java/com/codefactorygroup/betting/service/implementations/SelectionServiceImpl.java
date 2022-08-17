@@ -3,13 +3,14 @@ package com.codefactorygroup.betting.service.implementations;
 import com.codefactorygroup.betting.converter.SelectionDTOtoSelectionConverter;
 import com.codefactorygroup.betting.domain.Selection;
 import com.codefactorygroup.betting.dto.SelectionDTO;
-import com.codefactorygroup.betting.exception.EntityAlreadyExistsException;
 import com.codefactorygroup.betting.exception.NoSuchEntityExistsException;
 import com.codefactorygroup.betting.repository.SelectionRepository;
 import com.codefactorygroup.betting.service.SelectionService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service(value = "selectionService")
 public class SelectionServiceImpl implements SelectionService {
@@ -23,7 +24,6 @@ public class SelectionServiceImpl implements SelectionService {
         this.selectionDTOtoSelectionConverter = selectionDTOtoSelectionConverter;
     }
 
-    @Transactional
     @Override
     public SelectionDTO getSelection(Integer selectionId) {
         return selectionRepository.findById(selectionId)
@@ -31,14 +31,27 @@ public class SelectionServiceImpl implements SelectionService {
                 .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Selection with ID=%d doesn't exist.", selectionId)));
     }
 
+    @Override
+    public List<SelectionDTO> getAllSelections() {
+        return selectionRepository.findAll()
+                .stream()
+                .map(SelectionDTO::converter)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SelectionDTO> getSelectionsByMarketId(Integer marketId) {
+        return selectionRepository.findSelectionsByMarketId(marketId)
+                .stream()
+                .map(SelectionDTO::converter)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     @Override
     public SelectionDTO addSelection(SelectionDTO selection) {
-        boolean foundSelection = selectionRepository.existsById(selection.id());
-        if (foundSelection) {
-            throw new EntityAlreadyExistsException(String.format("Selection with ID=%d already exists.", selection.id()));
-        }
-        return SelectionDTO.converter(selectionRepository.save(selectionDTOtoSelectionConverter.convert(selection)));
+        return SelectionDTO.converter(
+                selectionRepository.save(selectionDTOtoSelectionConverter.convert(selection)));
     }
 
     @Transactional

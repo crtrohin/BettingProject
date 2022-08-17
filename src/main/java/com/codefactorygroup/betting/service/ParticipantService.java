@@ -9,11 +9,13 @@ public interface ParticipantService {
 
     ParticipantDTO getParticipant(Integer participantId);
 
+    List<ParticipantDTO> getAllParticipants();
+
+    List<ParticipantDTO> getParticipantsByEventId(Integer eventId);
+
     ParticipantDTO addParticipant(ParticipantDTO newParticipant);
 
     void deleteParticipant(Integer participantId);
-
-    List<ParticipantDTO> getAllParticipants();
 
     ParticipantDTO updateParticipant(ParticipantDTO toUpdateParticipant, Integer participantId);
 

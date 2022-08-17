@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Integer>{
@@ -22,6 +23,15 @@ public interface ParticipantRepository extends JpaRepository<Participant, Intege
     List<Participant> findRandomParticipantsDTO(
             @Param("numberOfParticipants") Integer numberOfParticipants);
 
-    Participant findByName(String name);
 
+    @Query(
+            value = "SELECT * \n" +
+                    "FROM PARTICIPANT p\n" +
+                    "WHERE p.id IN (\n" +
+                    "SELECT PARTICIPANT_ID FROM EVENT_PARTICIPANTS ep WHERE ep.event_id = 1)\n",
+            nativeQuery = true
+    )
+    List<Participant> findParticipantsByEventId(Integer eventId);
+
+    Optional<Participant> findByName(String name);
 }
