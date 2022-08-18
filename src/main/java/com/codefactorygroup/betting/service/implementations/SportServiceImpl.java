@@ -6,7 +6,6 @@ import com.codefactorygroup.betting.domain.Competition;
 import com.codefactorygroup.betting.domain.Sport;
 import com.codefactorygroup.betting.dto.CompetitionDTO;
 import com.codefactorygroup.betting.dto.SportDTO;
-import com.codefactorygroup.betting.exception.EntityAlreadyExistsException;
 import com.codefactorygroup.betting.exception.NoSuchEntityExistsException;
 import com.codefactorygroup.betting.repository.SportRepository;
 import com.codefactorygroup.betting.service.SportService;

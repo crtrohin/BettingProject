@@ -1,10 +1,12 @@
 package com.codefactorygroup.betting.domain;
 
+import com.codefactorygroup.betting.exception.EntityIsAlreadyLinked;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,6 +36,24 @@ public class Competition {
     }
 
     public void addEvent(Event event) {
-        this.events.add(event);
+        boolean eventIsContained = this.events.contains(event);
+        if (eventIsContained) {
+            throw new EntityIsAlreadyLinked(String.format("This event is already part of the competition."));
+        } else {
+            this.events.add(event);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Competition that = (Competition) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 }

@@ -1,10 +1,12 @@
 package com.codefactorygroup.betting.domain;
 
+import com.codefactorygroup.betting.exception.EntityIsAlreadyLinked;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @AllArgsConstructor
@@ -36,7 +38,12 @@ public class Event {
     private List<Participant> participants = new ArrayList<>();
 
     public void addParticipant(Participant participant) {
-        this.participants.add(participant);
+        boolean participantIsContained = this.participants.contains(participant);
+        if (participantIsContained) {
+            throw new EntityIsAlreadyLinked(String.format("This participant is already part of the event."));
+        } else {
+            this.participants.add(participant);
+        }
     }
 
     public void setParticipants(List<Participant> participants) {
@@ -52,10 +59,24 @@ public class Event {
     private List<Market> markets = new ArrayList<>();
 
     public void addMarket(Market market) {
-        this.markets.add(market);
+        boolean marketIsContained = this.markets.contains(market);
+        if (marketIsContained) {
+            throw new EntityIsAlreadyLinked(String.format("This market is already part of the event."));
+        } else {
+            this.markets.add(market);
+        }
     }
 
-    public void setMarkets(List<Market> markets) {
-        this.markets.addAll(markets);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Event event = (Event) o;
+        return Objects.equals(id, event.id) && Objects.equals(name, event.name) && Objects.equals(startTime, event.startTime) && Objects.equals(endTime, event.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, startTime, endTime);
     }
 }

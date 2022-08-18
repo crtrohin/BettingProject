@@ -4,14 +4,12 @@ import com.codefactorygroup.betting.converter.CompetitionDTOtoCompetitionConvert
 import com.codefactorygroup.betting.converter.EventDTOtoEventConverter;
 import com.codefactorygroup.betting.domain.Competition;
 import com.codefactorygroup.betting.domain.Event;
-import com.codefactorygroup.betting.domain.Selection;
 import com.codefactorygroup.betting.dto.CompetitionDTO;
 import com.codefactorygroup.betting.dto.EventDTO;
 import com.codefactorygroup.betting.exception.EntityAlreadyExistsException;
 import com.codefactorygroup.betting.exception.NoSuchEntityExistsException;
 import com.codefactorygroup.betting.repository.CompetitionRepository;
 import com.codefactorygroup.betting.service.CompetitionService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;

@@ -1,10 +1,12 @@
 package com.codefactorygroup.betting.domain;
 
+import com.codefactorygroup.betting.exception.EntityIsAlreadyLinked;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -31,10 +33,28 @@ public class Market {
     private List<Selection> selections = new ArrayList<>();
 
     public void addSelection(Selection selection) {
-        this.selections.add(selection);
+        boolean selectionIsContained = this.selections.contains(selection);
+        if (selectionIsContained) {
+            throw new EntityIsAlreadyLinked(String.format("This selection is already part of the market"));
+        } else {
+            this.selections.add(selection);
+        }
     }
 
     public void setSelections(List<Selection> selections) {
         this.selections.addAll(selections);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Market market = (Market) o;
+        return Objects.equals(id, market.id) && Objects.equals(name, market.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 }

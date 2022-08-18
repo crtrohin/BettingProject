@@ -20,4 +20,10 @@ public class ExceptionHandler extends ResponseEntityExceptionHandler {
                                                                   WebRequest request) {
         return new ResponseEntity<>(new ExceptionDTO(ex.getMessage(), HttpStatus.METHOD_NOT_ALLOWED.value()), HttpStatus.METHOD_NOT_ALLOWED);
     }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(EntityIsAlreadyLinked.class)
+    public ResponseEntity<ExceptionDTO> handleEntityIsAlreadyLinked(EntityIsAlreadyLinked ex,
+                                                                  WebRequest request) {
+        return new ResponseEntity<>(new ExceptionDTO(ex.getMessage(), HttpStatus.METHOD_NOT_ALLOWED.value()), HttpStatus.METHOD_NOT_ALLOWED);
+    }
 }
