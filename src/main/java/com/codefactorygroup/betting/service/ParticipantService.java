@@ -13,7 +13,7 @@ public interface ParticipantService {
 
     List<ParticipantDTO> getParticipantsByEventId(Integer eventId);
 
-    ParticipantDTO addParticipant(ParticipantDTO newParticipant);
+    ParticipantDTO addParticipant(Integer eventId, ParticipantDTO newParticipant);
 
     void deleteParticipant(Integer participantId);
 

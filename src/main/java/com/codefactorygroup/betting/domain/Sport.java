@@ -1,6 +1,5 @@
 package com.codefactorygroup.betting.domain;
 
-import com.codefactorygroup.betting.exception.EntityIsAlreadyLinked;
 import lombok.*;
 
 import javax.persistence.*;
@@ -32,12 +31,7 @@ public class Sport {
     private List<Competition> competitions = new ArrayList<>();
 
     public void addCompetition(Competition competition) {
-        boolean competitionIsContained = this.competitions.contains(competition);
-        if (competitionIsContained) {
-            throw new EntityIsAlreadyLinked(String.format("This competition is already part of the sport."));
-        } else {
-            this.competitions.add(competition);
-        }
+        this.competitions.add(competition);
     }
 
     public void removeCompetition(Competition competition) {

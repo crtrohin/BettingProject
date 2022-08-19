@@ -1,12 +1,12 @@
 package com.codefactorygroup.betting.service.implementations;
 
 import com.codefactorygroup.betting.converter.MarketDTOtoMarketConverter;
-import com.codefactorygroup.betting.converter.SelectionDTOtoSelectionConverter;
+import com.codefactorygroup.betting.domain.Event;
 import com.codefactorygroup.betting.domain.Market;
-import com.codefactorygroup.betting.domain.Selection;
 import com.codefactorygroup.betting.dto.MarketDTO;
-import com.codefactorygroup.betting.dto.SelectionDTO;
+import com.codefactorygroup.betting.exception.EntityAlreadyExistsException;
 import com.codefactorygroup.betting.exception.NoSuchEntityExistsException;
+import com.codefactorygroup.betting.repository.EventRepository;
 import com.codefactorygroup.betting.repository.MarketRepository;
 import com.codefactorygroup.betting.service.MarketService;
 import org.springframework.stereotype.Service;
@@ -20,15 +20,14 @@ public class MarketServiceImpl implements MarketService {
 
     private final MarketRepository marketRepository;
 
+    private final EventRepository eventRepository;
     private final MarketDTOtoMarketConverter marketDTOtoMarketConverter;
 
-    private final SelectionDTOtoSelectionConverter selectionDTOtoSelectionConverter;
-
-
-    public MarketServiceImpl(MarketRepository marketRepository, MarketDTOtoMarketConverter marketDTOtoMarketConverter, SelectionDTOtoSelectionConverter selectionDTOtoSelectionConverter) {
+    public MarketServiceImpl(MarketRepository marketRepository, EventRepository eventRepository,
+                             MarketDTOtoMarketConverter marketDTOtoMarketConverter) {
         this.marketRepository = marketRepository;
+        this.eventRepository = eventRepository;
         this.marketDTOtoMarketConverter = marketDTOtoMarketConverter;
-        this.selectionDTOtoSelectionConverter = selectionDTOtoSelectionConverter;
     }
 
     @Override
@@ -56,22 +55,22 @@ public class MarketServiceImpl implements MarketService {
 
     @Transactional
     @Override
-    public MarketDTO addMarket(MarketDTO market) {
-        return MarketDTO.converter(
-                marketRepository.save(marketDTOtoMarketConverter.convert(market)));
+    public MarketDTO addMarket(final Integer eventId, final MarketDTO newMarket) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Event with ID=%d doesn't exist.", eventId)));
+
+        boolean existsMarket = marketRepository.existsByEventIdAndName(eventId, newMarket.name());
+        if (existsMarket) {
+            throw new EntityAlreadyExistsException(String.format("Market with name=%s already exists.", newMarket.name()));
+        } else {
+            Market market = marketDTOtoMarketConverter.convert(newMarket);
+            event.addMarket(market);
+
+            return MarketDTO.converter(
+                    marketRepository.save(market));
+        }
     }
 
-    @Transactional
-    @Override
-    public MarketDTO addSelectionToMarket(SelectionDTO selectionDTO, Integer marketId) {
-        Market market = marketRepository.findById(marketId)
-                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Market with ID=%d doesn't exist.", marketId)));
-
-        Selection selection = selectionDTOtoSelectionConverter.convert(selectionDTO);
-        market.addSelection(selection);
-
-        return MarketDTO.converter(marketRepository.save(market));
-    }
 
     @Transactional
     @Override

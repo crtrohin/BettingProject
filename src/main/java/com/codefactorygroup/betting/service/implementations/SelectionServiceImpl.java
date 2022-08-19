@@ -1,9 +1,12 @@
 package com.codefactorygroup.betting.service.implementations;
 
 import com.codefactorygroup.betting.converter.SelectionDTOtoSelectionConverter;
+import com.codefactorygroup.betting.domain.Market;
 import com.codefactorygroup.betting.domain.Selection;
 import com.codefactorygroup.betting.dto.SelectionDTO;
+import com.codefactorygroup.betting.exception.EntityAlreadyExistsException;
 import com.codefactorygroup.betting.exception.NoSuchEntityExistsException;
+import com.codefactorygroup.betting.repository.MarketRepository;
 import com.codefactorygroup.betting.repository.SelectionRepository;
 import com.codefactorygroup.betting.service.SelectionService;
 import org.springframework.stereotype.Service;
@@ -17,10 +20,14 @@ public class SelectionServiceImpl implements SelectionService {
 
     private final SelectionRepository selectionRepository;
 
+    private final MarketRepository marketRepository;
+
     private final SelectionDTOtoSelectionConverter selectionDTOtoSelectionConverter;
 
-    public SelectionServiceImpl(SelectionRepository selectionRepository, SelectionDTOtoSelectionConverter selectionDTOtoSelectionConverter) {
+    public SelectionServiceImpl(SelectionRepository selectionRepository, MarketRepository marketRepository,
+                                SelectionDTOtoSelectionConverter selectionDTOtoSelectionConverter) {
         this.selectionRepository = selectionRepository;
+        this.marketRepository = marketRepository;
         this.selectionDTOtoSelectionConverter = selectionDTOtoSelectionConverter;
     }
 
@@ -49,9 +56,20 @@ public class SelectionServiceImpl implements SelectionService {
 
     @Transactional
     @Override
-    public SelectionDTO addSelection(SelectionDTO selection) {
-        return SelectionDTO.converter(
-                selectionRepository.save(selectionDTOtoSelectionConverter.convert(selection)));
+    public SelectionDTO addSelection(final Integer marketId, final SelectionDTO newSelection) {
+        Market market = marketRepository.findById(marketId)
+                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Market with ID=%d doesn't exist.", marketId)));
+
+        boolean existsSelection = selectionRepository.existsByName(newSelection.name());
+        if (existsSelection) {
+            throw new EntityAlreadyExistsException(String.format("Selection with name=%s already exists.", newSelection.name()));
+        } else {
+            Selection selection = selectionDTOtoSelectionConverter.convert(newSelection);
+            market.addSelection(selection);
+
+            return SelectionDTO.converter(
+                    selectionRepository.save(selection));
+        }
     }
 
     @Transactional

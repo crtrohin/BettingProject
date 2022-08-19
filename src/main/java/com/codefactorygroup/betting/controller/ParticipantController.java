@@ -31,9 +31,9 @@ public class ParticipantController {
         return participantService.getParticipantsByEventId(eventId);
     }
 
-    @PostMapping("/participants")
-    public ParticipantDTO addParticipant(@RequestBody final ParticipantDTO newParticipant) {
-        return participantService.addParticipant(newParticipant);
+    @PostMapping("/events/{eventId}/participants")
+    public ParticipantDTO addParticipant(@PathVariable(name = "eventId") final Integer eventId, @RequestBody final ParticipantDTO newParticipant) {
+        return participantService.addParticipant(eventId, newParticipant);
     }
 
     @PutMapping("/participants/{participantId}")

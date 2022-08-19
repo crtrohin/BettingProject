@@ -30,9 +30,9 @@ public class SelectionController {
         return selectionService.getSelectionsByMarketId(marketId);
     }
 
-    @PostMapping("/selections")
-    public SelectionDTO addSelection(@RequestBody final SelectionDTO selection) {
-        return selectionService.addSelection(selection);
+    @PostMapping("markets/{marketId}/selections")
+    public SelectionDTO addSelection(@PathVariable final Integer marketId, @RequestBody final SelectionDTO selection) {
+        return selectionService.addSelection(marketId, selection);
     }
 
     @DeleteMapping("/selections/{selectionId}")

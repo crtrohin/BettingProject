@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CompetitionRepository extends JpaRepository<Competition, Integer> {
@@ -17,5 +16,12 @@ public interface CompetitionRepository extends JpaRepository<Competition, Intege
     )
     List<Competition> findCompetitionsBySportId(Integer sportId);
 
-    Optional<Competition> findByName(String name);
+    @Query(
+            value = "SELECT COUNT(c.id) > 0 \n" +
+                    "FROM COMPETITION c \n" +
+                    "WHERE c.sport_id=?1 AND c.name=?2",
+            nativeQuery = true
+    )
+    boolean existsCompetitionBySportIdAndName(Integer sportId, String name);
+
 }

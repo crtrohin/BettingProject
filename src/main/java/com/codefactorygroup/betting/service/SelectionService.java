@@ -11,7 +11,7 @@ public interface SelectionService {
 
     List<SelectionDTO> getSelectionsByMarketId(Integer marketId);
 
-    SelectionDTO addSelection(SelectionDTO selection);
+    SelectionDTO addSelection(Integer marketId, SelectionDTO selection);
 
     void deleteSelection(Integer selectionId);
 

@@ -1,7 +1,6 @@
 package com.codefactorygroup.betting.controller;
 
 import com.codefactorygroup.betting.dto.CompetitionDTO;
-import com.codefactorygroup.betting.dto.EventDTO;
 import com.codefactorygroup.betting.service.CompetitionService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
@@ -32,12 +31,11 @@ public class CompetitionController {
         return competitionService.getCompetitionsBySportId(sportId);
     }
 
-
-    @PostMapping("/competitions")
-    public CompetitionDTO addCompetition(@RequestBody final CompetitionDTO competition) {
-        return competitionService.addCompetition(competition);
+    @PostMapping("sports/{sportId}/competitions")
+    public CompetitionDTO addCompetition(@PathVariable(name = "sportId") final Integer sportId,
+                                         @RequestBody final CompetitionDTO competition) {
+        return competitionService.addCompetition(sportId, competition);
     }
-
 
     @DeleteMapping("/competitions/{competitionId}")
     public void deleteCompetition(@PathVariable(name = "competitionId") final Integer competitionId) {
@@ -45,12 +43,9 @@ public class CompetitionController {
     }
 
     @PutMapping("/competitions/{competitionId}")
-    public CompetitionDTO updateCompetition(@RequestBody final CompetitionDTO competition, @PathVariable(name = "competitionId") final Integer competitionId) {
-        return competitionService.updateCompetition(competition, competitionId);
+    public CompetitionDTO updateCompetition(@PathVariable(name = "competitionId") Integer competitionId,
+                                @RequestBody final CompetitionDTO competitionDTO) {
+        return competitionService.updateCompetition(competitionDTO, competitionId);
     }
 
-    @PutMapping("/competitions/{competitionId}/events")
-    public CompetitionDTO addEventToCompetition(@RequestBody final EventDTO eventDTO, @PathVariable(name = "competitionId") final Integer competitionId) {
-        return competitionService.addEventToCompetition(eventDTO, competitionId);
-    }
 }

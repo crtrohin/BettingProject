@@ -15,4 +15,12 @@ public interface MarketRepository extends JpaRepository<Market, Integer> {
             nativeQuery = true
     )
     List<Market> findMarketsByEventId(Integer eventId);
+
+    @Query(
+            value = "SELECT COUNT(m.id) > 0 \n" +
+                    "FROM MARKET m\n" +
+                    "WHERE m.event_id=?1 AND m.name=?2",
+            nativeQuery = true
+    )
+    boolean existsByEventIdAndName(Integer eventId, String name);
 }

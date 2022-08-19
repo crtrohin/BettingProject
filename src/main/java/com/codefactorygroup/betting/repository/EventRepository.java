@@ -36,4 +36,14 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
     List<Event> findEventsByMarketId(Integer marketId);
 
     Optional<Event> findByNameAndStartTimeAndEndTime(String name, String startTime, String endTime);
+
+    @Query(
+            value = "SELECT COUNT(e.id) > 0 \n" +
+                    "FROM EVENT e \n" +
+                    "WHERE e.competition_id=?1 AND e.name=?2 AND e.start_time=?3 AND e.end_time=?4",
+            nativeQuery = true
+    )
+    boolean existsEventByCompetitionIdAndNameAndStartTimeAndEndTime(Integer competitionId, String name,
+                                                                    String startTime, String endTime);
+
 }

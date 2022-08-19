@@ -1,7 +1,6 @@
 package com.codefactorygroup.betting.controller;
 
 import com.codefactorygroup.betting.dto.MarketDTO;
-import com.codefactorygroup.betting.dto.SelectionDTO;
 import com.codefactorygroup.betting.service.MarketService;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,9 +30,9 @@ public class MarketController {
         return marketService.getMarketsByEventId(eventId);
     }
 
-    @PostMapping("/markets")
-    public MarketDTO addMarket(@RequestBody final MarketDTO market) {
-        return marketService.addMarket(market);
+    @PostMapping("events/{eventId}/markets")
+    public MarketDTO addMarket(@PathVariable(name ="eventId") final Integer eventId, @RequestBody final MarketDTO market) {
+        return marketService.addMarket(eventId, market);
     }
 
     @DeleteMapping("/markets/{marketId}")
@@ -46,8 +45,4 @@ public class MarketController {
         return marketService.updateMarket(market, marketId);
     }
 
-    @PutMapping("/markets/{marketId}/selections")
-    public MarketDTO addSelectionToMarket(@RequestBody final SelectionDTO selectionDTO, @PathVariable(name = "marketId") final Integer marketId) {
-        return marketService.addSelectionToMarket(selectionDTO, marketId);
-    }
 }

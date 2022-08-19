@@ -29,7 +29,12 @@ public class Event {
     @Column(name = "end_time")
     private String endTime;
 
-    @ManyToMany
+    @ManyToMany(
+            cascade = {
+                    CascadeType.MERGE,
+                    CascadeType.PERSIST
+            }
+    )
     @JoinTable(
             name = "event_participants",
             joinColumns = @JoinColumn(name = "event_id",  referencedColumnName = "id"),
@@ -38,16 +43,7 @@ public class Event {
     private List<Participant> participants = new ArrayList<>();
 
     public void addParticipant(Participant participant) {
-        boolean participantIsContained = this.participants.contains(participant);
-        if (participantIsContained) {
-            throw new EntityIsAlreadyLinked(String.format("This participant is already part of the event."));
-        } else {
-            this.participants.add(participant);
-        }
-    }
-
-    public void setParticipants(List<Participant> participants) {
-        this.participants.addAll(participants);
+        this.participants.add(participant);
     }
 
     @OneToMany(

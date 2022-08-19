@@ -1,6 +1,5 @@
 package com.codefactorygroup.betting.service;
 
-import com.codefactorygroup.betting.dto.CompetitionDTO;
 import com.codefactorygroup.betting.dto.SportDTO;
 
 import java.util.List;
@@ -15,6 +14,4 @@ public interface SportService {
     void deleteSport(Integer sportId);
 
     SportDTO updateSport(SportDTO newSport, Integer sportId);
-
-    SportDTO addCompetitionToSport(CompetitionDTO competitionDTO, Integer sportId);
 }

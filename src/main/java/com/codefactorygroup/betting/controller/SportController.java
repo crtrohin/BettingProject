@@ -1,6 +1,5 @@
 package com.codefactorygroup.betting.controller;
 
-import com.codefactorygroup.betting.dto.CompetitionDTO;
 import com.codefactorygroup.betting.dto.SportDTO;
 import com.codefactorygroup.betting.service.SportService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,8 +40,4 @@ public class SportController {
         return sportService.updateSport(sport, sportId);
     }
 
-    @PutMapping("/sports/{sportId}/competitions")
-    public SportDTO addCompetitionToSport(@RequestBody final CompetitionDTO competitionDTO, @PathVariable(name = "sportId") Integer sportId) {
-        return sportService.addCompetitionToSport(competitionDTO, sportId);
-    }
 }

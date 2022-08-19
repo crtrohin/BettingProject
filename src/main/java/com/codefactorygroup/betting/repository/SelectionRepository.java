@@ -15,4 +15,6 @@ public interface SelectionRepository extends JpaRepository<Selection, Integer> {
             nativeQuery = true
     )
     List<Selection> findSelectionsByMarketId(Integer marketId);
+
+    boolean existsByName(String name);
 }
