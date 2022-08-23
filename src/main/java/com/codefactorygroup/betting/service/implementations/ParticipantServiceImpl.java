@@ -31,7 +31,7 @@ public class ParticipantServiceImpl implements ParticipantService {
     public ParticipantDTO getParticipant(final Integer participantId) {
         return participantRepository.findById(participantId)
                 .map(ParticipantDTO::converter)
-                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("No participant with ID=%d was found.", participantId)));
+                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Participant with ID=%d doesn't exist.", participantId)));
 
     }
 
@@ -114,7 +114,7 @@ public class ParticipantServiceImpl implements ParticipantService {
                 .map(participantFromDb -> update(participantFromDb, toUpdateParticipant))
                 .map(participantRepository::save)
                 .map(ParticipantDTO::converter)
-                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("No participant with ID=%d was found.", participantId)));
+                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Participant with ID=%d doesn't exist.", participantId)));
     }
 
 }

@@ -1,4 +1,4 @@
-package com.codefactorygroup.betting;
+package com.codefactorygroup.betting.serviceTests;
 
 import com.codefactorygroup.betting.domain.Participant;
 import com.codefactorygroup.betting.repository.EventRepository;

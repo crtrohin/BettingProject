@@ -35,7 +35,7 @@ public class CompetitionServiceImpl implements CompetitionService {
     public CompetitionDTO getCompetition(final Integer competitionId) {
         return competitionRepository.findById(competitionId)
                 .map(CompetitionDTO::converter)
-                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Competition with ID=%d doesn't exists.", competitionId)));
+                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Competition with ID=%d doesn't exist.", competitionId)));
     }
 
     @Override

@@ -33,12 +33,4 @@ public class Sport {
     public void addCompetition(Competition competition) {
         this.competitions.add(competition);
     }
-
-    public void removeCompetition(Competition competition) {
-        this.competitions.remove(competition);
-    }
-
-    public void setCompetitions(List<Competition> competitions) {
-        this.competitions.addAll(competitions);
-    }
 }

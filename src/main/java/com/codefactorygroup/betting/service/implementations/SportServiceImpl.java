@@ -30,7 +30,7 @@ public class SportServiceImpl implements SportService {
     public SportDTO getSport(Integer sportId) {
         return sportRepository.findById(sportId)
                 .map(SportDTO::converter)
-                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Sport with ID=%d doesn't exists.", sportId)));
+                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Sport with ID=%d doesn't exist.", sportId)));
     }
 
     @Override
