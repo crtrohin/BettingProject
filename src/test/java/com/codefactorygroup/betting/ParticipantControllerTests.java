@@ -24,7 +24,7 @@ class ParticipantControllerTests {
 
     @Test
     void getParticipantShouldReturnParticipant() {
-        ParticipantDTO participantDTO = new ParticipantDTO(10, "Arsenal");
+        ParticipantDTO participantDTO = new ParticipantDTO( "Arsenal");
         when(participantService.getParticipant(10)).thenReturn(participantDTO);
 
         var response = participantController.getParticipant(10);
@@ -45,28 +45,28 @@ class ParticipantControllerTests {
 
     @Test
     void addParticipantShouldReturnParticipant() {
-        ParticipantDTO participantDTO = new ParticipantDTO(1, "Real Madrid");
-        when(participantService.addParticipant(participantDTO)).thenReturn(participantDTO);
+        ParticipantDTO participantDTO = new ParticipantDTO("Real Madrid");
+        when(participantService.addParticipant(1, participantDTO)).thenReturn(participantDTO);
 
-        var response = participantController.addParticipant(participantDTO);
+        var response = participantController.addParticipant(1, participantDTO);
 
         assertEquals(participantDTO, response);
     }
 
     @Test
     void addParticipantShoudlReturnException() {
-        ParticipantDTO participantDTO = new ParticipantDTO(2, "Atletico Bilbao");
-        when(participantService.addParticipant(participantDTO)).thenThrow(new EntityAlreadyExistsException(String.format("Participant with ID = %d already exists.", 2)));
+        ParticipantDTO participantDTO = new ParticipantDTO("Atletico Bilbao");
+        when(participantService.addParticipant(1, participantDTO)).thenThrow(new EntityAlreadyExistsException(String.format("Participant with ID = %d already exists.", 2)));
 
         EntityAlreadyExistsException entityAlreadyExistsException = assertThrows(EntityAlreadyExistsException.class,
-                () -> participantController.addParticipant(participantDTO));
+                () -> participantController.addParticipant(1, participantDTO));
 
         assertEquals("Participant with ID = 2 already exists.", entityAlreadyExistsException.getMessage());
     }
 
     @Test
     void updateParticipantShouldReturnParticipant() {
-        ParticipantDTO participantDTO = new ParticipantDTO(3, "FC Shakhtar Donetsk");
+        ParticipantDTO participantDTO = new ParticipantDTO("FC Shakhtar Donetsk");
         when(participantService.updateParticipant(participantDTO, 3)).thenReturn(participantDTO);
 
         ParticipantDTO response = participantController.updateParticipant(participantDTO, 3);
@@ -76,7 +76,7 @@ class ParticipantControllerTests {
 
     @Test
     void updateParticipantShouldReturnException() {
-        ParticipantDTO participantDTO = new ParticipantDTO(4, "Tottenham");
+        ParticipantDTO participantDTO = new ParticipantDTO( "Tottenham");
         when(participantService.updateParticipant(participantDTO, 4)).thenThrow(new NoSuchEntityExistsException(String.format("No participant with ID = %d was found.", 4)));
 
         NoSuchEntityExistsException noSuchEntityExistsException = assertThrows(NoSuchEntityExistsException.class,

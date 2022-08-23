@@ -1,6 +1,7 @@
 package com.codefactorygroup.betting;
 
 import com.codefactorygroup.betting.domain.Participant;
+import com.codefactorygroup.betting.repository.EventRepository;
 import com.codefactorygroup.betting.repository.ParticipantRepository;
 import com.codefactorygroup.betting.service.implementations.ParticipantServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -20,8 +21,11 @@ class ParticipantServiceTests {
     @Mock
     private ParticipantRepository participantRepository;
 
+    @Mock
+    private EventRepository eventRepository;
+
     private final ParticipantServiceImpl participantService =
-            new ParticipantServiceImpl(null, participantRepository);
+            new ParticipantServiceImpl(null, participantRepository, eventRepository);
 
     @Test
     void getParticipantShouldReturnParticipant() {

@@ -16,14 +16,14 @@ class ParticipantConverterTests {
     @Test
     void checkParticipantToParticipantDtoConversion() {
         ParticipantDTO actualParticipant = ParticipantDTO.converter(new Participant(9, "Atletico Madrid", new ArrayList<>()));
-        ParticipantDTO expectedParticipant = new ParticipantDTO(9, "Atletico Madrid");
+        ParticipantDTO expectedParticipant = new ParticipantDTO( "Atletico Madrid");
         assertEquals(actualParticipant, expectedParticipant);
     }
 
     @Test
     void checkParticipantDtoToParticipantConversion() {
-        Participant actualParticipant = participantDtoToParticipantConverter.convert(new ParticipantDTO(9, "Atletico Madrid"));
-        Participant expectedParticipant = new Participant(9, "Atletico Madrid", new ArrayList<>());
+        Participant actualParticipant = participantDtoToParticipantConverter.convert(new ParticipantDTO( "Atletico Madrid"));
+        Participant expectedParticipant = new Participant(64, "Atletico Madrid", new ArrayList<>());
         assertEquals(actualParticipant, expectedParticipant);
     }
 
