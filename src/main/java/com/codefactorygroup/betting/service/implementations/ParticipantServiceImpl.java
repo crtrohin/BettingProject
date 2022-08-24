@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class ParticipantServiceImpl implements ParticipantService {
     private final ParticipantDtoToParticipantConverter participantDtoToParticipantConverter;
     private final ParticipantRepository participantRepository;
-
     private final EventRepository eventRepository;
 
     @Override
@@ -32,7 +31,6 @@ public class ParticipantServiceImpl implements ParticipantService {
         return participantRepository.findById(participantId)
                 .map(ParticipantDTO::converter)
                 .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Participant with ID=%d doesn't exist.", participantId)));
-
     }
 
     @Override

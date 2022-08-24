@@ -36,12 +36,7 @@ public class Competition {
     }
 
     public void addEvent(Event event) {
-        boolean eventIsContained = this.events.contains(event);
-        if (eventIsContained) {
-            throw new EntityIsAlreadyLinked(String.format("This event is already part of the competition."));
-        } else {
-            this.events.add(event);
-        }
+        this.events.add(event);
     }
 
     @Override

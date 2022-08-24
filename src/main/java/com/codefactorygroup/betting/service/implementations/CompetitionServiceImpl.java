@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 public class CompetitionServiceImpl implements CompetitionService {
 
     private final CompetitionRepository competitionRepository;
-
     private final SportRepository sportRepository;
     private final CompetitionDTOtoCompetitionConverter competitionDTOtoCompetitionConverter;
 
