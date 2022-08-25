@@ -60,6 +60,25 @@ class SelectionControllerTests {
     }
 
     @Test
+    void getSelectionsByMarketIdShouldReturnSelections() throws Exception {
+        this.mockMvc.perform(get("/markets/1/selections")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.[0].name").value("Senegal"));
+    }
+
+    @Test
+    void getSelectionsByMarketIdShouldReturnException() throws Exception {
+        this.mockMvc.perform(get("/markets/100/selections")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andExpect(result -> assertEquals("Market with ID=100 doesn't exist.",
+                        result.getResolvedException().getMessage()));
+    }
+
+    @Test
     void addSelectionShouldReturnSelection() throws Exception {
         SelectionDTO selectionDTO = SelectionDTO.builder()
                 .name("Arsenal")

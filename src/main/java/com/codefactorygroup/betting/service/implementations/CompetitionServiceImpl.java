@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service(value = "competitionService")
@@ -47,6 +48,10 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     @Override
     public List<CompetitionDTO> getCompetitionsBySportId(final Integer sportId) {
+        Optional<Sport> sportOptional = sportRepository.findById(sportId);
+        if (sportOptional.isEmpty()) {
+            throw new NoSuchEntityExistsException(String.format("Sport with ID=%d doesn't exist.", sportId));
+        }
         return competitionRepository.findCompetitionsBySportId(sportId)
                 .stream()
                 .map(CompetitionDTO::converter)

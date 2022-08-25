@@ -3,6 +3,7 @@ package com.codefactorygroup.betting.service.implementations;
 import com.codefactorygroup.betting.converter.EventDTOtoEventConverter;
 import com.codefactorygroup.betting.domain.Competition;
 import com.codefactorygroup.betting.domain.Event;
+import com.codefactorygroup.betting.domain.Market;
 import com.codefactorygroup.betting.domain.Participant;
 import com.codefactorygroup.betting.dto.EventDTO;
 import com.codefactorygroup.betting.exception.EntityAlreadyExistsException;
@@ -10,12 +11,14 @@ import com.codefactorygroup.betting.exception.EntityIsAlreadyLinked;
 import com.codefactorygroup.betting.exception.NoSuchEntityExistsException;
 import com.codefactorygroup.betting.repository.CompetitionRepository;
 import com.codefactorygroup.betting.repository.EventRepository;
+import com.codefactorygroup.betting.repository.MarketRepository;
 import com.codefactorygroup.betting.repository.ParticipantRepository;
 import com.codefactorygroup.betting.service.EventService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service(value = "eventService")
@@ -27,14 +30,17 @@ public class EventServiceImpl implements EventService {
 
     private final ParticipantRepository participantRepository;
 
+    private final MarketRepository marketRepository;
+
     private final EventDTOtoEventConverter eventDTOtoEventConverter;
 
 
     public EventServiceImpl(EventRepository eventRepository, CompetitionRepository competitionRepository,
-                            ParticipantRepository participantRepository, EventDTOtoEventConverter eventDTOtoEventConverter) {
+                            ParticipantRepository participantRepository, MarketRepository marketRepository, EventDTOtoEventConverter eventDTOtoEventConverter) {
         this.eventRepository = eventRepository;
         this.competitionRepository = competitionRepository;
         this.participantRepository = participantRepository;
+        this.marketRepository = marketRepository;
         this.eventDTOtoEventConverter = eventDTOtoEventConverter;
     }
 
@@ -55,6 +61,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventDTO> getEventsByCompetitionId(Integer competitionId) {
+        Optional<Competition> competitionOptional = competitionRepository.findById(competitionId);
+        if (competitionOptional.isEmpty()) {
+            throw new NoSuchEntityExistsException(String.format("Competition with ID=%d doesn't exist.", competitionId));
+        }
         return eventRepository.findEventsByCompetitionId(competitionId)
                 .stream()
                 .map(EventDTO::converter)
@@ -63,6 +73,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventDTO> getEventsByParticipantId(Integer participantId) {
+        Optional<Participant> participantOptional = participantRepository.findById(participantId);
+        if (participantOptional.isEmpty()) {
+            throw new NoSuchEntityExistsException(String.format("Participant with ID=%d doesn't exist.", participantId));
+        }
         return eventRepository.findEventsByParticipantId(participantId)
                 .stream()
                 .map(EventDTO::converter)
@@ -71,6 +85,10 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public List<EventDTO> getEventsByMarketId(Integer marketId) {
+        Optional<Market> marketOptional = marketRepository.findById(marketId);
+        if (marketOptional.isEmpty()) {
+            throw new NoSuchEntityExistsException(String.format("Market with ID=%d doesn't exist.", marketId));
+        }
         return eventRepository.findEventsByMarketId(marketId)
                 .stream()
                 .map(EventDTO::converter)

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service(value = "selectionService")
@@ -48,6 +49,10 @@ public class SelectionServiceImpl implements SelectionService {
 
     @Override
     public List<SelectionDTO> getSelectionsByMarketId(Integer marketId) {
+        Optional<Market> marketOptional = marketRepository.findById(marketId);
+        if (marketOptional.isEmpty()) {
+            throw new NoSuchEntityExistsException(String.format("Market with ID=%d doesn't exist.", marketId));
+        }
         return selectionRepository.findSelectionsByMarketId(marketId)
                 .stream()
                 .map(SelectionDTO::converter)

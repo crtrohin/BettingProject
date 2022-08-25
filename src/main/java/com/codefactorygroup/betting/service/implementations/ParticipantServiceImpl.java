@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service(value = "participantService")
@@ -43,6 +44,10 @@ public class ParticipantServiceImpl implements ParticipantService {
 
     @Override
     public List<ParticipantDTO> getParticipantsByEventId(Integer eventId) {
+        Optional<Event> eventOptional = eventRepository.findById(eventId);
+        if (eventOptional.isEmpty()) {
+            throw new NoSuchEntityExistsException(String.format("Event with ID=%d doesn't exist.", eventId));
+        }
         return participantRepository.findParticipantsByEventId(eventId)
                 .stream()
                 .map(ParticipantDTO::converter)

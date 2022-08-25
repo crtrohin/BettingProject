@@ -62,6 +62,26 @@ class ParticipantControllerTests {
     }
 
     @Test
+    void getParticipantsByEventIdShouldReturnParticipants() throws Exception {
+        this.mockMvc.perform(get("/events/1/participants")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.[0].name").value("Senegal"));
+    }
+
+    @Test
+    void getParticipantsByEventIdShouldReturnException() throws Exception {
+        this.mockMvc.perform(get("/events/100/participants")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andExpect(result -> assertEquals("Event with ID=100 doesn't exist.",
+                        result.getResolvedException().getMessage()));
+    }
+
+
+    @Test
     void addParticipantShouldReturnParticipant() throws Exception {
         ParticipantDTO participantDTO = ParticipantDTO.builder()
                 .name("FC Sheriff")

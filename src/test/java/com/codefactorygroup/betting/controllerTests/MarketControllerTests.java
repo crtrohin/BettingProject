@@ -60,6 +60,26 @@ class MarketControllerTests {
     }
 
     @Test
+    void getMarketsByEventIdShouldReturnMarkets() throws Exception {
+        this.mockMvc.perform(get("/events/1/markets")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.[0].name").value("1x2"));
+    }
+
+    @Test
+    void getMarketsByEventIdShouldReturnException() throws Exception {
+        this.mockMvc.perform(get("/events/100/markets")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andExpect(result -> assertEquals("Event with ID=100 doesn't exist.",
+                        result.getResolvedException().getMessage()));
+    }
+
+
+    @Test
     void addMarketShouldReturnMarket() throws Exception {
         MarketDTO marketDTO = MarketDTO
                 .builder()
@@ -116,14 +136,14 @@ class MarketControllerTests {
                 .build();
 
         this.mockMvc
-                .perform(put("/markets/1")
+                .perform(put("/markets/5")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(marketDTO))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(jsonPath("$.name").value("Handicap"))
-                .andExpect(jsonPath("$.selections[2].name").value("Netherlands"));
+                .andExpect(jsonPath("$.selections[2].name").value("Saudi Arabia"));
     }
 
     @Test

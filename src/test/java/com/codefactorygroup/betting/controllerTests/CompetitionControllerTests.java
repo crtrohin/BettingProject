@@ -66,6 +66,25 @@ class CompetitionControllerTests {
     }
 
     @Test
+    void getCompetitionsBySportIdShouldReturnCompetition() throws Exception {
+        this.mockMvc.perform(get("/sports/1/competitions")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.[0].name").value("FIFA World Cup"));
+    }
+
+    @Test
+    void getCompetitionsBySportIdShouldReturnException() throws Exception {
+        this.mockMvc.perform(get("/sports/100/competitions")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andExpect(result -> assertEquals("Sport with ID=100 doesn't exist.",
+                        result.getResolvedException().getMessage()));
+    }
+
+    @Test
     void addCompetitionShouldReturnCompetition() throws Exception {
         CompetitionDTO competitionDTO = CompetitionDTO
                 .builder()

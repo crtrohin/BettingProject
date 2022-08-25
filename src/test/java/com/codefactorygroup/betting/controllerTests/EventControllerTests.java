@@ -10,8 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.concurrent.ExecutionException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -64,6 +62,64 @@ class EventControllerTests {
                 .andDo(print())
                 .andExpect(jsonPath("$.[1].name").value("Qatar vs Ecuador"));
     }
+
+    @Test
+    void getEventsByCompetitionIdShouldReturnEvent() throws Exception {
+        this.mockMvc.perform(get("/competitions/1/events")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.[0].name").value("Senegal vs Netherlands"));
+    }
+
+    @Test
+    void getEventsByCompetitionIdShouldReturnException() throws Exception {
+        this.mockMvc.perform(get("/competitions/100/events")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andExpect(result -> assertEquals("Competition with ID=100 doesn't exist.",
+                        result.getResolvedException().getMessage()));
+    }
+
+    @Test
+    void getEventsByParticipantIdShouldReturnEvent() throws Exception {
+        this.mockMvc.perform(get("/participants/31/events")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.[0].name").value("Senegal vs Netherlands"));
+    }
+
+    @Test
+    void getEventsByParticipantIdShouldReturnException() throws Exception {
+        this.mockMvc.perform(get("/participants/100/events")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andExpect(result -> assertEquals("Participant with ID=100 doesn't exist.",
+                        result.getResolvedException().getMessage()));
+    }
+
+    @Test
+    void getEventsByMarketIdShouldReturnEvent() throws Exception {
+        this.mockMvc.perform(get("/markets/1/events")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.[0].name").value("Senegal vs Netherlands"));
+    }
+
+    @Test
+    void getEventsByMarketIdShouldReturnException() throws Exception {
+        this.mockMvc.perform(get("/markets/100/events")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andExpect(result -> assertEquals("Market with ID=100 doesn't exist.",
+                        result.getResolvedException().getMessage()));
+    }
+
 
     @Test
     void addEventShouldReturnEvent() throws Exception {
@@ -126,6 +182,43 @@ class EventControllerTests {
     }
 
 
+    @Test
+    void addParticipantToEventShouldReturnEvent() throws Exception {
+        this.mockMvc.perform(put("/events/2/participants/2"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(jsonPath("$.participants[0].name").value("Qatar"))
+                .andExpect(jsonPath("$.participants[2].name").value("Real Madrid"))
+                .andExpect(jsonPath("$.participants[2].id").value(2));
+    }
+
+    @Test
+    void addParticipantToEventShouldReturnExceptionNoEventExists() throws Exception {
+        this.mockMvc.perform(put("/events/100/participants/3"))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andExpect(result -> assertEquals("Event with ID=100 doesn't exist.",
+                        result.getResolvedException().getMessage()));
+    }
+
+    @Test
+    void addParticipantToEventShouldReturnExceptionNoParticipantsExists() throws Exception {
+        this.mockMvc.perform(put("/events/1/participants/100"))
+                .andExpect(status().isNotFound())
+                .andDo(print())
+                .andExpect(result -> assertEquals("Participant with ID=100 doesn't exist.",
+                        result.getResolvedException().getMessage()));
+    }
+
+    @Test
+    void addParticipantToEventShouldReturnExceptionParticipantAlreadyLinked() throws Exception {
+        this.mockMvc.perform(put("/events/1/participants/31"))
+                .andExpect(status().isMethodNotAllowed())
+                .andDo(print())
+                .andExpect(result -> assertEquals("Participant with ID=31 is already linked to event with ID=1.",
+                        result.getResolvedException().getMessage()));
+    }
+
 
     @Test
     void updateEventShouldReturnEvent() throws Exception {
@@ -137,15 +230,15 @@ class EventControllerTests {
                 .build();
 
         this.mockMvc
-                .perform(put("/events/1")
+                .perform(put("/events/11")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJsonString(eventDTO))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.id").value(11))
                 .andExpect(jsonPath("$.name").value("Uruguay vs South Korea"))
-                .andExpect(jsonPath("$.participants[1].name").value("Netherlands"));
+                .andExpect(jsonPath("$.participants[1].name").value("Croatia"));
     }
 
     @Test

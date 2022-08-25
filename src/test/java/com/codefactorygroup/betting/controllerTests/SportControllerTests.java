@@ -57,7 +57,7 @@ class SportControllerTests {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(jsonPath("$.[0].competitions[4].name").value("EFL Championship"))
+                .andExpect(jsonPath("$.[0].competitions[0].name").value("FIFA World Cup"))
                 .andExpect(jsonPath("$.[4].name").value("Volleyball"));
     }
 
