@@ -4,8 +4,9 @@ import com.codefactorygroup.betting.dto.SelectionDTO;
 import com.codefactorygroup.betting.service.SelectionService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping(path = "/selections")
 public class SelectionController {
 
     private final SelectionService selectionService;
@@ -14,22 +15,32 @@ public class SelectionController {
         this.selectionService = selectionService;
     }
 
-    @GetMapping("/{selectionId}")
+    @GetMapping("/selections/{selectionId}")
     public SelectionDTO getSelection(@PathVariable(name = "selectionId") final Integer selectionId) {
         return selectionService.getSelection(selectionId);
     }
 
-    @PostMapping
-    public SelectionDTO addSelection(@RequestBody final SelectionDTO selection) {
-        return selectionService.addSelection(selection);
+    @GetMapping("/selections")
+    public List<SelectionDTO> getAllSelections() {
+        return selectionService.getAllSelections();
     }
 
-    @DeleteMapping("/{selectionId}")
+    @GetMapping("/markets/{marketId}/selections")
+    public List<SelectionDTO> getSelectionsByMarketId(@PathVariable(name = "marketId") final Integer marketId) {
+        return selectionService.getSelectionsByMarketId(marketId);
+    }
+
+    @PostMapping("markets/{marketId}/selections")
+    public SelectionDTO addSelection(@PathVariable final Integer marketId, @RequestBody final SelectionDTO selection) {
+        return selectionService.addSelection(marketId, selection);
+    }
+
+    @DeleteMapping("/selections/{selectionId}")
     public void deleteSelection(@PathVariable(name = "selectionId") final Integer selectionId) {
         selectionService.deleteSelection(selectionId);
     }
 
-    @PutMapping("/{selectionId}")
+    @PutMapping("/selections/{selectionId}")
     public SelectionDTO updateSelection(@RequestBody final SelectionDTO selection, @PathVariable(name = "selectionId") final Integer selectionId) {
         return selectionService.updateSelection(selection, selectionId);
     }

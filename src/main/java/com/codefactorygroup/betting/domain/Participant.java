@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-// the central domain concept in my betting application
-// we are defining here the entity class that represents a participant
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "participant")
@@ -40,6 +38,6 @@ public class Participant {
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(name);
     }
 }

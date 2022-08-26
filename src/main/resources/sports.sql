@@ -1,4 +1,4 @@
-INSERT INTO sport (name) VALUES ('Footbal');
+INSERT INTO sport (name) VALUES ('Football');
 INSERT INTO sport (name) VALUES ('Tennis');
 INSERT INTO sport (name) VALUES ('Basketball');
 INSERT INTO sport (name) VALUES ('Ice Hockey');

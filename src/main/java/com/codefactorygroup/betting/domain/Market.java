@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -30,7 +31,20 @@ public class Market {
     @Column(name = "selections")
     private List<Selection> selections = new ArrayList<>();
 
-    public void setSelections(List<Selection> selections) {
-        this.selections.addAll(selections);
+    public void addSelection(Selection selection) {
+        this.selections.add(selection);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Market market = (Market) o;
+        return Objects.equals(id, market.id) && Objects.equals(name, market.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 }

@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @AllArgsConstructor
@@ -27,7 +28,12 @@ public class Event {
     @Column(name = "end_time")
     private String endTime;
 
-    @ManyToMany
+    @ManyToMany(
+            cascade = {
+                    CascadeType.MERGE,
+                    CascadeType.PERSIST
+            }
+    )
     @JoinTable(
             name = "event_participants",
             joinColumns = @JoinColumn(name = "event_id",  referencedColumnName = "id"),
@@ -35,8 +41,8 @@ public class Event {
     @Column(name ="participants")
     private List<Participant> participants = new ArrayList<>();
 
-    public void setParticipants(List<Participant> participants) {
-        this.participants.addAll(participants);
+    public void addParticipant(Participant participant) {
+        this.participants.add(participant);
     }
 
     @OneToMany(
@@ -47,7 +53,20 @@ public class Event {
     @Column(name = "markets")
     private List<Market> markets = new ArrayList<>();
 
-    public void setMarkets(List<Market> markets) {
-        this.markets.addAll(markets);
+    public void addMarket(Market market) {
+        this.markets.add(market);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Event event = (Event) o;
+        return Objects.equals(id, event.id) && Objects.equals(name, event.name) && Objects.equals(startTime, event.startTime) && Objects.equals(endTime, event.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, startTime, endTime);
     }
 }

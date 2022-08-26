@@ -12,5 +12,5 @@ INSERT INTO event (name, competition_id) VALUES ('Morocco vs Croatia', 1);
 INSERT INTO event (name, competition_id) VALUES ('Belgium vs Canada', 1);
 INSERT INTO event (name, competition_id) VALUES ('Switzerland vs Cameroon', 1);
 INSERT INTO event (name, competition_id) VALUES ('Brazil vs Serbia', 1);
-INSERT INTO event (name, competition_id) VALUES ('Uruguay vs South Korea', 1);
+INSERT INTO event (name, start_time, end_time, competition_id) VALUES ('Uruguay vs South Korea','12/02/2023 14:00','12/02/2023 15:30',1);
 INSERT INTO event (name, competition_id) VALUES ('Portugal vs Ghana', 1);
