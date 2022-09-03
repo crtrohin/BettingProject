@@ -33,9 +33,15 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
+			<version>42.5.0</version>
 		</dependency>
 
 		<dependency>
@@ -62,6 +68,20 @@
 			<version>4.6.1</version>
 			<scope>test</scope>
 		</dependency>
-
     </dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<version>4.9.1</version>
+				<configuration>
+					<propertyFile>
+						src/main/resources/liquibase.yaml
+					</propertyFile>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>
