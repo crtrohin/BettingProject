@@ -5,6 +5,7 @@ import com.codefactorygroup.betting.service.EventService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class EventController {
@@ -61,4 +62,8 @@ public class EventController {
         return eventService.addParticipantToEvent(participantId, eventId);
     }
 
+    @GetMapping("/events/short")
+    public List<Map<String, String>> getEventsShortVersion() {
+        return eventService.getEventsShortVersion();
+    }
 }

@@ -10,18 +10,6 @@ import java.util.List;
 
 @Repository
 public interface ParticipantRepository extends JpaRepository<Participant, Integer>{
-    @Query(value = """
-            SELECT *
-            FROM participant pa
-            WHERE pa.id IN (SELECT p.id
-            FROM participant p
-            ORDER BY RAND())
-            LIMIT :numberOfParticipants
-            """
-            ,nativeQuery = true)
-    List<Participant> findRandomParticipantsDTO(
-            @Param("numberOfParticipants") Integer numberOfParticipants);
-
     @Query(
             value = "SELECT COUNT(e_p.event_id) > 0\n" +
                     "FROM EVENT_PARTICIPANTS e_p\n" +

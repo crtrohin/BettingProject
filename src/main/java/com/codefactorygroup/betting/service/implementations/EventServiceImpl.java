@@ -1,24 +1,17 @@
 package com.codefactorygroup.betting.service.implementations;
 
 import com.codefactorygroup.betting.converter.EventDTOtoEventConverter;
-import com.codefactorygroup.betting.domain.Competition;
-import com.codefactorygroup.betting.domain.Event;
-import com.codefactorygroup.betting.domain.Market;
-import com.codefactorygroup.betting.domain.Participant;
+import com.codefactorygroup.betting.domain.*;
 import com.codefactorygroup.betting.dto.EventDTO;
 import com.codefactorygroup.betting.exception.EntityAlreadyExistsException;
 import com.codefactorygroup.betting.exception.EntityIsAlreadyLinked;
 import com.codefactorygroup.betting.exception.NoSuchEntityExistsException;
-import com.codefactorygroup.betting.repository.CompetitionRepository;
-import com.codefactorygroup.betting.repository.EventRepository;
-import com.codefactorygroup.betting.repository.MarketRepository;
-import com.codefactorygroup.betting.repository.ParticipantRepository;
+import com.codefactorygroup.betting.repository.*;
 import com.codefactorygroup.betting.service.EventService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service(value = "eventService")
@@ -28,6 +21,8 @@ public class EventServiceImpl implements EventService {
 
     private final CompetitionRepository competitionRepository;
 
+    private final SportRepository sportRepository;
+
     private final ParticipantRepository participantRepository;
 
     private final MarketRepository marketRepository;
@@ -36,9 +31,10 @@ public class EventServiceImpl implements EventService {
 
 
     public EventServiceImpl(EventRepository eventRepository, CompetitionRepository competitionRepository,
-                            ParticipantRepository participantRepository, MarketRepository marketRepository, EventDTOtoEventConverter eventDTOtoEventConverter) {
+                            SportRepository sportRepository, ParticipantRepository participantRepository, MarketRepository marketRepository, EventDTOtoEventConverter eventDTOtoEventConverter) {
         this.eventRepository = eventRepository;
         this.competitionRepository = competitionRepository;
+        this.sportRepository = sportRepository;
         this.participantRepository = participantRepository;
         this.marketRepository = marketRepository;
         this.eventDTOtoEventConverter = eventDTOtoEventConverter;
@@ -160,6 +156,38 @@ public class EventServiceImpl implements EventService {
                 .map(eventRepository::save)
                 .map(EventDTO::converter)
                 .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Event with ID=%d doesn't exist.", eventId)));
+    }
+
+    @Override
+    public List<Map<String, String>> getEventsShortVersion() {
+        List<Map<String, String>> list = new ArrayList<>();
+        List<Event> events = eventRepository.findAll();
+
+        for (Event event : events) {
+            Map<String, String> map = new HashMap<>();
+            map.put("id", event.getId().toString());
+            map.put("name", event.getName());
+            map.put("startTime", event.getStartTime());
+
+            List<Participant> participants = event.getParticipants();
+            List<String> participantsNames = new ArrayList<>();
+            for (Participant participant: participants) {
+                participantsNames.add(participant.getName());
+            }
+
+            String namesConcat = participantsNames
+                    .stream()
+                    .reduce("", (acc, name) -> acc + "-" + name.substring(0, 3))
+                    .substring(1);
+
+            map.put("shortName", namesConcat);
+
+            Optional<Sport> sport = sportRepository.findSportByEventId(event.getId());
+            map.put("sportName", sport.get().getName());
+            list.add(map);
+        }
+
+        return list;
     }
 
 }
