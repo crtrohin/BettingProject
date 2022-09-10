@@ -66,4 +66,9 @@ public class EventController {
     public List<Map<String, String>> getEventsShortVersion() {
         return eventService.getEventsShortVersion();
     }
+
+    @GetMapping("/events/marketsSorted")
+    public List<EventDTO> getEventsMarketsOrdBySelectionPricesDesc() {
+        return eventService.getEventsMarketsOrdBySelectionPricesDesc();
+    }
 }

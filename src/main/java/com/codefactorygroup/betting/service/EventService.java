@@ -26,4 +26,6 @@ public interface EventService {
     EventDTO addParticipantToEvent(Integer participantId, Integer eventId);
 
     List<Map<String, String>> getEventsShortVersion();
+
+    List<EventDTO> getEventsMarketsOrdBySelectionPricesDesc();
 }

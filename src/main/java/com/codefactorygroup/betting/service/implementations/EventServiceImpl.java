@@ -190,4 +190,21 @@ public class EventServiceImpl implements EventService {
         return list;
     }
 
+    public List<EventDTO> getEventsMarketsOrdBySelectionPricesDesc() {
+        List<Event> events = eventRepository.findAll();
+        for (Event event: events) {
+            for (Market market: event.getMarkets()) {
+                market.setSelections(market.getSelections()
+                        .stream()
+                        .sorted(Comparator.comparing(Selection::getOdds).reversed())
+                        .collect(Collectors.toList()));
+            }
+        }
+
+        return events
+                .stream()
+                .map(EventDTO::converter)
+                .collect(Collectors.toList());
+    }
+
 }
