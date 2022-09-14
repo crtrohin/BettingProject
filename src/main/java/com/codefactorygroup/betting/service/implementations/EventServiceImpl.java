@@ -8,10 +8,15 @@ import com.codefactorygroup.betting.exception.EntityIsAlreadyLinked;
 import com.codefactorygroup.betting.exception.NoSuchEntityExistsException;
 import com.codefactorygroup.betting.repository.*;
 import com.codefactorygroup.betting.service.EventService;
+import lombok.SneakyThrows;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service(value = "eventService")
@@ -29,6 +34,8 @@ public class EventServiceImpl implements EventService {
 
     private final EventDTOtoEventConverter eventDTOtoEventConverter;
 
+    static final Logger LOGGER =
+            Logger.getLogger(Event.class.getName());
 
     public EventServiceImpl(EventRepository eventRepository, CompetitionRepository competitionRepository,
                             SportRepository sportRepository, ParticipantRepository participantRepository, MarketRepository marketRepository, EventDTOtoEventConverter eventDTOtoEventConverter) {
@@ -206,5 +213,27 @@ public class EventServiceImpl implements EventService {
                 .map(EventDTO::converter)
                 .collect(Collectors.toList());
     }
+
+    @SneakyThrows
+    @Scheduled(fixedDelay = 15000)
+    public void checkIfInPlay() {
+
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        Date date = new Date();
+
+        for (Event event: eventRepository.findAll()) {
+            boolean isPreMatch = dateFormat.parse(event.getStartTime()).after(date);
+            boolean isAfterMatch = dateFormat.parse(event.getEndTime()).before(date);
+
+            if (!isAfterMatch && !isPreMatch) {
+                event.setInPlay(true);
+                eventRepository.save(event);
+            } else if (event.getInPlay() == true) {
+                event.setInPlay(false);
+                eventRepository.save(event);
+            }
+        }
+    }
+
 
 }

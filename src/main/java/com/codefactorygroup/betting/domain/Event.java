@@ -28,6 +28,9 @@ public class Event {
     @Column(name = "end_time")
     private String endTime;
 
+    @Column(name = "in_play")
+    private Boolean inPlay;
+
     @ManyToMany(
             cascade = {
                     CascadeType.MERGE,
