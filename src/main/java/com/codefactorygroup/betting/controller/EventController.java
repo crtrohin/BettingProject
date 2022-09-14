@@ -71,4 +71,9 @@ public class EventController {
     public List<EventDTO> getEventsMarketsOrdBySelectionPricesDesc() {
         return eventService.getEventsMarketsOrdBySelectionPricesDesc();
     }
+
+    @GetMapping("/events/notFootball/{nrOfMarkets}")
+    public List<EventDTO> getEventsWithNrOfMarketsGreaterThanAndNotFromFootballSport(@PathVariable Integer nrOfMarkets) {
+        return eventService.getEventsWithNrOfMarketsGreaterThanAndNotFromFootballSport(nrOfMarkets);
+    }
 }

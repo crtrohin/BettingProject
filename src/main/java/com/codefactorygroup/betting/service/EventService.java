@@ -28,4 +28,6 @@ public interface EventService {
     List<Map<String, String>> getEventsShortVersion();
 
     List<EventDTO> getEventsMarketsOrdBySelectionPricesDesc();
+
+    List<EventDTO> getEventsWithNrOfMarketsGreaterThanAndNotFromFootballSport(final Integer nrOfMarkets);
 }

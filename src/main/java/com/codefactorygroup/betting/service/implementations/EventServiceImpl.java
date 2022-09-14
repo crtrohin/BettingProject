@@ -214,6 +214,15 @@ public class EventServiceImpl implements EventService {
                 .collect(Collectors.toList());
     }
 
+    public List<EventDTO> getEventsWithNrOfMarketsGreaterThanAndNotFromFootballSport(final Integer nrOfMarkets) {
+        return eventRepository.findAll()
+                .stream()
+                .filter(event -> sportRepository.findSportByEventId(event.getId()).get().getName() != "Football")
+                .filter(event -> event.getMarkets().stream().count() > nrOfMarkets)
+                .map(EventDTO::converter)
+                .collect(Collectors.toList());
+    }
+
     @SneakyThrows
     @Scheduled(fixedDelay = 15000)
     public void checkIfInPlay() {
@@ -234,6 +243,5 @@ public class EventServiceImpl implements EventService {
             }
         }
     }
-
 
 }
