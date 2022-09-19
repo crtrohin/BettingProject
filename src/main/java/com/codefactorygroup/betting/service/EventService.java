@@ -31,4 +31,6 @@ public interface EventService {
 
     List<EventDTO> getEventsWithNrOfMarketsGreaterThanAndNotFromFootballSport(final Integer nrOfMarkets);
 
+    List<EventDTO> getEventsWithDuplicatedParticipantAndDistinctYear();
+
 }

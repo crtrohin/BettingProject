@@ -76,4 +76,9 @@ public class EventController {
     public List<EventDTO> getEventsWithNrOfMarketsGreaterThanAndNotFromFootballSport(@PathVariable Integer nrOfMarkets) {
         return eventService.getEventsWithNrOfMarketsGreaterThanAndNotFromFootballSport(nrOfMarkets);
     }
+
+    @GetMapping("/events/duplicatedParticipant/distinctYear")
+    public List<EventDTO> getEventsWithDuplicatedParticipantAndDistinctYear() {
+        return eventService.getEventsWithDuplicatedParticipantAndDistinctYear();
+    }
 }

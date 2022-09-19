@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Logger;
@@ -242,6 +243,40 @@ public class EventServiceImpl implements EventService {
                 eventRepository.save(event);
             }
         }
+    }
+
+    @SneakyThrows
+    @Override
+    public List<EventDTO> getEventsWithDuplicatedParticipantAndDistinctYear() {
+        List<Participant> participants = participantRepository.findAll();
+
+        List<Event> finalEvents = new ArrayList<>();
+
+        for (Participant participant: participants) {
+            Set<String> set = new HashSet<>();
+
+            List<Event> events = eventRepository.findEventsByParticipantId(participant.getId());
+
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+
+            events.removeIf(event -> {
+                try {
+                    return !set.add(String.valueOf(dateFormat.parse(event.getStartTime()).getYear()));
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            if (events.size() >= 2) {
+                finalEvents.addAll(events);
+            }
+        }
+
+
+        return finalEvents
+                .stream()
+                .map(EventDTO::converter)
+                .toList();
     }
 
 }
