@@ -30,4 +30,5 @@ public interface EventService {
     List<EventDTO> getEventsMarketsOrdBySelectionPricesDesc();
 
     List<EventDTO> getEventsWithNrOfMarketsGreaterThanAndNotFromFootballSport(final Integer nrOfMarkets);
+
 }
