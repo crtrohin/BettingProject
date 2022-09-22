@@ -105,31 +105,14 @@ public class MarketServiceImpl implements MarketService {
     }
 
     @Override
-    public List<Map<String, String>> calcAvgPriceForPreMatchMarkets() {
-        List<Market> markets = marketRepository.findAll();
-
-        List<Map<String, String>> mapList = new ArrayList<>();
-
-        for (Market market: markets) {
-            Integer sum = market.getSelections()
-                    .stream()
-                    .map(Selection::getOdds)
-                    .reduce(0, Integer::sum);
-
-            Double mean = Double.valueOf(sum / market.getSelections().size());
-
-            Map<String, String> map = new HashMap<>();
-            map.put("Market", market.getName());
-
-            List<Event> events = eventRepository.findEventsByMarketId(market.getId());
-            map.put("Event", events.get(0).getName());
-
-            map.put("Average price", mean.toString());
-
-            mapList.add(map);
-        }
-
-        return mapList;
+    public Map<Integer, Object> calcAvgPriceForAllMarkets() {
+        return marketRepository.findAll()
+                .stream()
+                .collect(Collectors.toMap(Market::getId, m -> m.getSelections()
+                        .stream()
+                        .mapToDouble(Selection::getOdds)
+                        .average()
+                        .getAsDouble()));
     }
 
 

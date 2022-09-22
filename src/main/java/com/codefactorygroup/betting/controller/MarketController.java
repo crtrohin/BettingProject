@@ -47,8 +47,8 @@ public class MarketController {
     }
 
     @GetMapping("/markets/averagePrice")
-    public List<Map<String, String>> calcAvgPriceForPreMatchMarkets() {
-        return marketService.calcAvgPriceForPreMatchMarkets();
+    public Map<Integer, Object> calcAvgPriceForAllMarkets() {
+        return marketService.calcAvgPriceForAllMarkets();
     }
 
 }

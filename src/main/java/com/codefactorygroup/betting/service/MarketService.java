@@ -18,6 +18,6 @@ public interface MarketService {
 
     MarketDTO updateMarket(MarketDTO market, Integer marketId);
 
-    List<Map<String, String>> calcAvgPriceForPreMatchMarkets();
+    Map<Integer, Object> calcAvgPriceForAllMarkets();
 
 }

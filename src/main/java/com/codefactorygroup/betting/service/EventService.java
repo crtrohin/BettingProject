@@ -1,9 +1,9 @@
 package com.codefactorygroup.betting.service;
 
 import com.codefactorygroup.betting.dto.EventDTO;
+import com.codefactorygroup.betting.dto.EventShortDTO;
 
 import java.util.List;
-import java.util.Map;
 
 public interface EventService {
 
@@ -25,7 +25,7 @@ public interface EventService {
 
     EventDTO addParticipantToEvent(Integer participantId, Integer eventId);
 
-    List<Map<String, String>> getEventsShortVersion();
+    List<EventShortDTO> getEventsShortVersion();
 
     List<EventDTO> getEventsMarketsOrdBySelectionPricesDesc();
 
