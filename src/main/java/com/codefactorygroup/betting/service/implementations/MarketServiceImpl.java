@@ -3,6 +3,7 @@ package com.codefactorygroup.betting.service.implementations;
 import com.codefactorygroup.betting.converter.MarketDTOtoMarketConverter;
 import com.codefactorygroup.betting.domain.Event;
 import com.codefactorygroup.betting.domain.Market;
+import com.codefactorygroup.betting.domain.Selection;
 import com.codefactorygroup.betting.dto.MarketDTO;
 import com.codefactorygroup.betting.exception.EntityAlreadyExistsException;
 import com.codefactorygroup.betting.exception.NoSuchEntityExistsException;
@@ -12,8 +13,7 @@ import com.codefactorygroup.betting.service.MarketService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service(value = "marketService")
@@ -103,4 +103,17 @@ public class MarketServiceImpl implements MarketService {
                 .map(MarketDTO::converter)
                 .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Market with ID=%d doesn't exist.", marketId)));
     }
+
+    @Override
+    public Map<Integer, Object> calcAvgPriceForAllMarkets() {
+        return marketRepository.findAll()
+                .stream()
+                .collect(Collectors.toMap(Market::getId, m -> m.getSelections()
+                        .stream()
+                        .mapToDouble(Selection::getOdds)
+                        .average()
+                        .getAsDouble()));
+    }
+
+
 }

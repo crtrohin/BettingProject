@@ -3,13 +3,9 @@ spring:
     init:
       mode: always
   datasource:
-    url: jdbc:postgresql://localhost:5432/my_first_postgres_database
+    url: jdbc:postgresql://localhost:5432/betting-db
     username: newuser
     password: password
-  liquibase:
-    enabled: true
-    change-log:
-      classpath:db/changelog/changelog.sql
   jpa:
     properties:
       hibernate:

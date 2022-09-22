@@ -1,7 +1,0 @@
-url: jdbc:postgresql://localhost:5432/my_first_postgres_database
-username: newuser
-password: password
-driver: org.postgresql.Driver
-changeLogFile: src/main/resources/db/changelog/changelog.sql
-
-

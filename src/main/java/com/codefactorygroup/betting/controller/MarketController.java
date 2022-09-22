@@ -5,6 +5,7 @@ import com.codefactorygroup.betting.service.MarketService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class MarketController {
@@ -43,6 +44,11 @@ public class MarketController {
     @PutMapping("/markets/{marketId}")
     public MarketDTO updateMarket(@RequestBody final MarketDTO market, @PathVariable(name = "marketId") final Integer marketId) {
         return marketService.updateMarket(market, marketId);
+    }
+
+    @GetMapping("/markets/averagePrice")
+    public Map<Integer, Object> calcAvgPriceForAllMarkets() {
+        return marketService.calcAvgPriceForAllMarkets();
     }
 
 }

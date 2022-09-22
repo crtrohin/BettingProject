@@ -1,24 +1,23 @@
 package com.codefactorygroup.betting.service.implementations;
 
 import com.codefactorygroup.betting.converter.EventDTOtoEventConverter;
-import com.codefactorygroup.betting.domain.Competition;
-import com.codefactorygroup.betting.domain.Event;
-import com.codefactorygroup.betting.domain.Market;
-import com.codefactorygroup.betting.domain.Participant;
+import com.codefactorygroup.betting.domain.*;
 import com.codefactorygroup.betting.dto.EventDTO;
+import com.codefactorygroup.betting.dto.EventShortDTO;
 import com.codefactorygroup.betting.exception.EntityAlreadyExistsException;
 import com.codefactorygroup.betting.exception.EntityIsAlreadyLinked;
 import com.codefactorygroup.betting.exception.NoSuchEntityExistsException;
-import com.codefactorygroup.betting.repository.CompetitionRepository;
-import com.codefactorygroup.betting.repository.EventRepository;
-import com.codefactorygroup.betting.repository.MarketRepository;
-import com.codefactorygroup.betting.repository.ParticipantRepository;
+import com.codefactorygroup.betting.repository.*;
 import com.codefactorygroup.betting.service.EventService;
+import lombok.SneakyThrows;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service(value = "eventService")
@@ -28,17 +27,21 @@ public class EventServiceImpl implements EventService {
 
     private final CompetitionRepository competitionRepository;
 
+    private final SportRepository sportRepository;
+
     private final ParticipantRepository participantRepository;
 
     private final MarketRepository marketRepository;
 
     private final EventDTOtoEventConverter eventDTOtoEventConverter;
 
+    DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
 
     public EventServiceImpl(EventRepository eventRepository, CompetitionRepository competitionRepository,
-                            ParticipantRepository participantRepository, MarketRepository marketRepository, EventDTOtoEventConverter eventDTOtoEventConverter) {
+                            SportRepository sportRepository, ParticipantRepository participantRepository, MarketRepository marketRepository, EventDTOtoEventConverter eventDTOtoEventConverter) {
         this.eventRepository = eventRepository;
         this.competitionRepository = competitionRepository;
+        this.sportRepository = sportRepository;
         this.participantRepository = participantRepository;
         this.marketRepository = marketRepository;
         this.eventDTOtoEventConverter = eventDTOtoEventConverter;
@@ -160,6 +163,115 @@ public class EventServiceImpl implements EventService {
                 .map(eventRepository::save)
                 .map(EventDTO::converter)
                 .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Event with ID=%d doesn't exist.", eventId)));
+    }
+
+    private EventShortDTO eventToEventShort(final Event event) {
+        final String sportName = sportRepository
+                .findSportByEventId(event.getId())
+                .map(Sport::getName)
+                .orElseThrow(() -> new NoSuchEntityExistsException("Can't find sport for event with ID = %d".formatted(event.getId())));
+
+        return EventShortDTO.builder()
+                .id(event.getId())
+                .name(event.getName())
+                .startTime(event.getStartTime())
+                .shortName(event.getShortName())
+                .sportName(sportName)
+                .build();
+    }
+
+    @Override
+    public List<EventShortDTO> getEventsShortVersion() {
+        return eventRepository.findAll()
+                .stream()
+                .map(this::eventToEventShort)
+                .toList();
+    }
+
+    public List<EventDTO> getEventsMarketsOrdBySelectionPricesDesc() {
+        List<Event> events = eventRepository.findAll();
+        for (Event event: events) {
+            for (Market market: event.getMarkets()) {
+                market.setSelections(market.getSelections()
+                        .stream()
+                        .sorted(Comparator.comparing(Selection::getOdds).reversed())
+                        .collect(Collectors.toList()));
+            }
+        }
+
+        return events
+                .stream()
+                .map(EventDTO::converter)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    private boolean isRequiredSport(final Integer eventId,
+                                    final String sportName) {
+        return sportRepository.findSportByEventId(eventId)
+                .map(Sport::getName)
+                .map(n -> !n.equals(sportName))
+                .orElse(false);
+    }
+
+    public List<EventDTO> getEventsWithNrOfMarketsGreaterThanAndNotFromFootballSport(final Integer nrOfMarkets) {
+        return eventRepository.findAll().stream()
+                .filter(event -> isRequiredSport(event.getId(), "Football"))
+                .filter(e -> e.getMarkets().size() > nrOfMarkets)
+                .map(EventDTO::converter)
+                .toList();
+    }
+
+    @SneakyThrows
+    @Scheduled(fixedDelay = 15000)
+    public void checkIfInPlay() {
+
+        Date date = new Date();
+
+        for (Event event: eventRepository.findAll()) {
+            boolean isPreMatch = dateFormat.parse(event.getStartTime()).after(date);
+            boolean isAfterMatch = dateFormat.parse(event.getEndTime()).before(date);
+
+            if (!isAfterMatch && !isPreMatch) {
+                event.setInPlay(true);
+                eventRepository.save(event);
+            } else if (event.getInPlay()) {
+                event.setInPlay(false);
+                eventRepository.save(event);
+            }
+        }
+    }
+
+    @SneakyThrows
+    @Override
+    public List<EventDTO> getEventsWithDuplicatedParticipantAndDistinctYear() {
+        List<Participant> participants = participantRepository.findAll();
+
+        List<Event> finalEvents = new ArrayList<>();
+
+        for (Participant participant: participants) {
+            Set<String> set = new HashSet<>();
+
+            List<Event> events = eventRepository.findEventsByParticipantId(participant.getId());
+
+            events.removeIf(event -> {
+                try {
+                    return !set.add(String.valueOf(dateFormat.parse(event.getStartTime()).getYear()));
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            if (events.size() >= 2) {
+                finalEvents.addAll(events);
+            }
+        }
+
+
+        return finalEvents
+                .stream()
+                .map(EventDTO::converter)
+                .toList();
     }
 
 }

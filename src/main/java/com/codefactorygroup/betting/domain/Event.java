@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @AllArgsConstructor
@@ -27,6 +28,9 @@ public class Event {
 
     @Column(name = "end_time")
     private String endTime;
+
+    @Column(name = "in_play")
+    private Boolean inPlay;
 
     @ManyToMany(
             cascade = {
@@ -68,5 +72,12 @@ public class Event {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, startTime, endTime);
+    }
+
+    public String getShortName() {
+        return participants.stream()
+                .map(Participant::getName)
+                .map(n -> n.substring(0, 3))
+                .collect(Collectors.joining("-"));
     }
 }

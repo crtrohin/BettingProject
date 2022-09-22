@@ -1,6 +1,7 @@
 package com.codefactorygroup.betting.controller;
 
 import com.codefactorygroup.betting.dto.EventDTO;
+import com.codefactorygroup.betting.dto.EventShortDTO;
 import com.codefactorygroup.betting.service.EventService;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,4 +62,23 @@ public class EventController {
         return eventService.addParticipantToEvent(participantId, eventId);
     }
 
+    @GetMapping("/events/short")
+    public List<EventShortDTO> getEventsShortVersion() {
+        return eventService.getEventsShortVersion();
+    }
+
+    @GetMapping("/events/marketsSorted")
+    public List<EventDTO> getEventsMarketsOrdBySelectionPricesDesc() {
+        return eventService.getEventsMarketsOrdBySelectionPricesDesc();
+    }
+
+    @GetMapping("/events/notFootball/{nrOfMarkets}")
+    public List<EventDTO> getEventsWithNrOfMarketsGreaterThanAndNotFromFootballSport(@PathVariable Integer nrOfMarkets) {
+        return eventService.getEventsWithNrOfMarketsGreaterThanAndNotFromFootballSport(nrOfMarkets);
+    }
+
+    @GetMapping("/events/duplicatedParticipant/distinctYear")
+    public List<EventDTO> getEventsWithDuplicatedParticipantAndDistinctYear() {
+        return eventService.getEventsWithDuplicatedParticipantAndDistinctYear();
+    }
 }
