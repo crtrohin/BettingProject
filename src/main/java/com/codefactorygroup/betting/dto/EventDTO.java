@@ -10,8 +10,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Builder
-public record EventDTO(Integer id, String name, List<ParticipantDTO> participants, String startTime, String endTime, List<MarketDTO> markets) {
-
+public record EventDTO(
+        Integer id,
+        String name,
+        Boolean inPlay,
+        List<ParticipantDTO> participants,
+        String startTime,
+        String endTime,
+        List<MarketDTO> markets) {
     public static EventDTO converter(final Event event) {
         List<Participant> participantList = Optional.of(event).map(Event::getParticipants).orElseGet(Collections::emptyList);
         List<Market> eventMarkets = Optional.of(event).map(Event::getMarkets).orElseGet(Collections::emptyList);
@@ -22,6 +28,7 @@ public record EventDTO(Integer id, String name, List<ParticipantDTO> participant
                         .stream()
                         .map(ParticipantDTO::converter)
                         .toList())
+                .inPlay(event.getInPlay())
                 .startTime(event.getStartTime())
                 .endTime(event.getEndTime())
                 .markets(eventMarkets

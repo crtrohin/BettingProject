@@ -1,6 +1,8 @@
 package com.codefactorygroup.betting.service;
 
+import com.codefactorygroup.betting.domain.SelectionResult;
 import com.codefactorygroup.betting.dto.SelectionDTO;
+import com.codefactorygroup.betting.dto.SelectionResultDTO;
 
 import java.util.List;
 
@@ -16,4 +18,6 @@ public interface SelectionService {
     void deleteSelection(Integer selectionId);
 
     SelectionDTO updateSelection(SelectionDTO selection, Integer selectionId);
+
+    SelectionDTO setSelectionResult(Integer selectionId, SelectionResultDTO selectionResultDTO);
 }
