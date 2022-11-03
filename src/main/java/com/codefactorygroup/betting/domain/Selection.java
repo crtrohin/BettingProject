@@ -23,12 +23,21 @@ public class Selection {
     @Column(name = "odds")
     private Integer odds;
 
+
+    @Column(name = "selection_result")
+    @Enumerated(EnumType.STRING)
+    private SelectionResult selectionResult;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Selection selection = (Selection) o;
         return Objects.equals(id, selection.id) && Objects.equals(name, selection.name) && Objects.equals(odds, selection.odds);
+    }
+
+    public void setSelectionResult(SelectionResult selectionResult) {
+        this.selectionResult = selectionResult;
     }
 
     @Override

@@ -1,9 +1,12 @@
 package com.codefactorygroup.betting.service.implementations;
 
 import com.codefactorygroup.betting.converter.SelectionDTOtoSelectionConverter;
+import com.codefactorygroup.betting.converter.SelectionResultDTOtoSelectionResultConverter;
 import com.codefactorygroup.betting.domain.Market;
 import com.codefactorygroup.betting.domain.Selection;
+import com.codefactorygroup.betting.domain.SelectionResult;
 import com.codefactorygroup.betting.dto.SelectionDTO;
+import com.codefactorygroup.betting.dto.SelectionResultDTO;
 import com.codefactorygroup.betting.exception.EntityAlreadyExistsException;
 import com.codefactorygroup.betting.exception.NoSuchEntityExistsException;
 import com.codefactorygroup.betting.repository.MarketRepository;
@@ -25,11 +28,15 @@ public class SelectionServiceImpl implements SelectionService {
 
     private final SelectionDTOtoSelectionConverter selectionDTOtoSelectionConverter;
 
+    private final SelectionResultDTOtoSelectionResultConverter selectionResultDTOtoSelectionResultConverter;
+
+
     public SelectionServiceImpl(SelectionRepository selectionRepository, MarketRepository marketRepository,
-                                SelectionDTOtoSelectionConverter selectionDTOtoSelectionConverter) {
+                                SelectionDTOtoSelectionConverter selectionDTOtoSelectionConverter, SelectionResultDTOtoSelectionResultConverter selectionResultDTOtoSelectionResultConverter) {
         this.selectionRepository = selectionRepository;
         this.marketRepository = marketRepository;
         this.selectionDTOtoSelectionConverter = selectionDTOtoSelectionConverter;
+        this.selectionResultDTOtoSelectionResultConverter = selectionResultDTOtoSelectionResultConverter;
     }
 
     @Override
@@ -100,6 +107,24 @@ public class SelectionServiceImpl implements SelectionService {
     public SelectionDTO updateSelection(final SelectionDTO newSelection, final Integer selectionId) {
         return selectionRepository.findById(selectionId)
                 .map(selectionFromDb -> update(selectionFromDb, newSelection))
+                .map(selectionRepository::save)
+                .map(SelectionDTO::converter)
+                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Selection with ID=%d doesn't exist.", selectionId)));
+    }
+
+    public Selection setResult(
+            final Selection selection,
+            final SelectionResultDTO selectionResultDTO) {
+        selection.setSelectionResult(selectionResultDTOtoSelectionResultConverter.convert(selectionResultDTO));
+        return selection;
+    }
+
+    @Override
+    public SelectionDTO setSelectionResult(
+            final Integer selectionId,
+            final SelectionResultDTO selectionResultDTO) {
+        return selectionRepository.findById(selectionId)
+                .map(selectionFromDb -> setResult(selectionFromDb, selectionResultDTO))
                 .map(selectionRepository::save)
                 .map(SelectionDTO::converter)
                 .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Selection with ID=%d doesn't exist.", selectionId)));
