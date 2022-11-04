@@ -42,7 +42,6 @@ public class SelectionController {
             @PathVariable final Integer marketId,
             @PathVariable final Integer selectionId,
             @RequestBody final SelectionResultDTO selectionResultDTO) {
-
         selectionService.setSelectionResult(selectionId, selectionResultDTO);
     }
 

@@ -4,6 +4,7 @@ import com.codefactorygroup.betting.converter.SelectionDTOtoSelectionConverter;
 import com.codefactorygroup.betting.converter.SelectionResultDTOtoSelectionResultConverter;
 import com.codefactorygroup.betting.domain.Market;
 import com.codefactorygroup.betting.domain.Selection;
+import com.codefactorygroup.betting.domain.SelectionResult;
 import com.codefactorygroup.betting.dto.SelectionDTO;
 import com.codefactorygroup.betting.dto.SelectionResultDTO;
 import com.codefactorygroup.betting.exception.EntityAlreadyExistsException;
