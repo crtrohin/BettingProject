@@ -19,5 +19,5 @@ public interface SelectionService {
 
     SelectionDTO updateSelection(SelectionDTO selection, Integer selectionId);
 
-    SelectionDTO setSelectionResult(Integer selectionId, SelectionResultDTO selectionResultDTO);
+    void setSelectionResult(Integer selectionId, SelectionResultDTO selectionResultDTO);
 }

@@ -9,6 +9,7 @@ import com.codefactorygroup.betting.dto.SelectionDTO;
 import com.codefactorygroup.betting.dto.SelectionResultDTO;
 import com.codefactorygroup.betting.exception.EntityAlreadyExistsException;
 import com.codefactorygroup.betting.exception.NoSuchEntityExistsException;
+import com.codefactorygroup.betting.kafka.KafkaProducerSelections;
 import com.codefactorygroup.betting.repository.MarketRepository;
 import com.codefactorygroup.betting.repository.SelectionRepository;
 import com.codefactorygroup.betting.service.SelectionService;
@@ -30,13 +31,15 @@ public class SelectionServiceImpl implements SelectionService {
 
     private final SelectionResultDTOtoSelectionResultConverter selectionResultDTOtoSelectionResultConverter;
 
+    private final KafkaProducerSelections kafkaProducerSelections;
 
     public SelectionServiceImpl(SelectionRepository selectionRepository, MarketRepository marketRepository,
-                                SelectionDTOtoSelectionConverter selectionDTOtoSelectionConverter, SelectionResultDTOtoSelectionResultConverter selectionResultDTOtoSelectionResultConverter) {
+                                SelectionDTOtoSelectionConverter selectionDTOtoSelectionConverter, SelectionResultDTOtoSelectionResultConverter selectionResultDTOtoSelectionResultConverter, KafkaProducerSelections kafkaProducerSelections) {
         this.selectionRepository = selectionRepository;
         this.marketRepository = marketRepository;
         this.selectionDTOtoSelectionConverter = selectionDTOtoSelectionConverter;
         this.selectionResultDTOtoSelectionResultConverter = selectionResultDTOtoSelectionResultConverter;
+        this.kafkaProducerSelections = kafkaProducerSelections;
     }
 
     @Override
@@ -120,13 +123,15 @@ public class SelectionServiceImpl implements SelectionService {
     }
 
     @Override
-    public SelectionDTO setSelectionResult(
+    public void setSelectionResult(
             final Integer selectionId,
             final SelectionResultDTO selectionResultDTO) {
-        return selectionRepository.findById(selectionId)
+
+        selectionRepository.findById(selectionId)
                 .map(selectionFromDb -> setResult(selectionFromDb, selectionResultDTO))
                 .map(selectionRepository::save)
                 .map(SelectionDTO::converter)
-                .orElseThrow(() -> new NoSuchEntityExistsException(String.format("Selection with ID=%d doesn't exist.", selectionId)));
+                .ifPresentOrElse(kafkaProducerSelections::sendUpdatedSelectionMessage,
+                        () -> new NoSuchEntityExistsException(String.format("Selection with ID=%d doesn't exist.", selectionId)));
     }
 }

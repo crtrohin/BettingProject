@@ -37,12 +37,12 @@ public class SelectionController {
     }
 
     @PutMapping("events/{eventId}/markets/{marketId}/selections/{selectionId}")
-    public SelectionDTO setSelectionResult(
+    public void setSelectionResult(
             @PathVariable final Integer eventId,
             @PathVariable final Integer marketId,
             @PathVariable final Integer selectionId,
             @RequestBody final SelectionResultDTO selectionResultDTO) {
-        return selectionService.setSelectionResult(selectionId, selectionResultDTO);
+        selectionService.setSelectionResult(selectionId, selectionResultDTO);
     }
 
     @DeleteMapping("/selections/{selectionId}")
